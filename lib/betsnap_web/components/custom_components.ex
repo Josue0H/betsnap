@@ -4,7 +4,7 @@ defmodule BetsnapWeb.CustomComponents do
   @spec topbar(any()) :: Phoenix.LiveView.Rendered.t()
   def topbar(assigns) do
     ~H"""
-    <div class="w-full bg-brand h-auto px-5 py-5 flex justify-between align-center">
+    <div class="topbar fixed w-full bg-brand h-auto px-5 py-5 flex justify-between align-center shadow-md z-50">
         <div class="w-24">
           <img
             src={"/images/logo-text.png"}
@@ -22,14 +22,16 @@ defmodule BetsnapWeb.CustomComponents do
                 Home
               </.link>
             </li>
-            <li>
-              <.link
-                href={"/my-bets"}
-                class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
-              >
-                My Bets
-              </.link>
-            </li>
+            <%= if @current_user do %>
+              <li>
+                <.link
+                  href={"/my-bets"}
+                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                >
+                  My Bets
+                </.link>
+              </li>
+            <% end %>
           </ul>
         </div>
         <div class="flex">
@@ -76,6 +78,31 @@ defmodule BetsnapWeb.CustomComponents do
           </ul>
         </div>
     </div>
+    """
+  end
+
+  def sidebar(assigns) do
+    ~H"""
+      <div class="h-screen p-2 pb-[5rem] bg-brand flex flex-col overflow-auto custom-slider">
+        <p class="font-bold text-white mb-2">Countries</p>
+        <ul class="flex flex-col">
+          <%= for country <- @countries do %>
+            <div class="flex ml-2">
+              <%= if country["name"] != "World" do %>
+                <img
+                  src={country["flag"]}
+                  alt={country["country"]}
+                  class="w-5 h-5"
+                />
+              <% end %>
+              <li
+              class={if @selected_country === country["code"], do: "text-white ml-2 font-bold",
+              else: "text-white ml-1 mb-1 hover:ml-2 cursor-pointer transition-all"}
+              ><%= country["name"] %></li>
+            </div>
+          <% end %>
+        </ul>
+      </div>
     """
   end
 

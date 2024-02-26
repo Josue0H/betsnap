@@ -20,10 +20,11 @@ defmodule BetsnapWeb.Router do
   scope "/", BetsnapWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live_session :betsnap_session do
 
-
-    live "/my-bets", MyBetsLive
+      live "/", HomeLive, :home
+      live "/my-bets", MyBetsLive, :my_bets
+    end
   end
 
   # Other scopes may use custom stacks.
