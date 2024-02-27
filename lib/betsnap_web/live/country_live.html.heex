@@ -1,0 +1,19 @@
+<div class="w-full h-screen flex pt-20 justify-center">
+    <div class="container w-[70%] mt-5">
+        <div class="mt-5">
+            <div class="flex">
+                <img src={@country["flag"]} alt="Albania" class="w-20 h-15 mr-3">
+                <h1 class="text-white text-7xl"><%= @country["name"] %></h1>                
+            </div>
+            <hr class="text-white mt-3"/>
+            <div class="mt-5">
+                <h1 class="text-white text-4xl">Leagues</h1>
+            </div>
+            <div>
+                <%= for league <- @leagues do %>
+                    <.live_component module={BetsnapWeb.MatchSlider} id={league} league={league} />
+                <% end %>
+            </div>
+        </div>
+    </div>
+</div>

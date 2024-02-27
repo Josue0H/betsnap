@@ -16,13 +16,11 @@ defmodule BetsnapWeb.HomeLive do
     socket = assign(
       socket,
       countries: countries,
-      best_leagues: [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id],
-      selected_country: "MX"
+      best_leagues: [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id]
     )
 
     {:ok, socket}
   end
-
 
 
 

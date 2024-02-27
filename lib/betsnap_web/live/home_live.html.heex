@@ -1,7 +1,7 @@
 <.flash_group flash={@flash} />
 <div class="w-full h-screen flex">
     <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-screen fixed top-[4.3rem] pb-[4.3rem]">
-        <BetsnapWeb.CustomComponents.sidebar countries={@countries} selected_country={@selected_country}/>
+        <BetsnapWeb.CustomComponents.sidebar countries={@countries}/>
     </div>
     <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-full"></div>
     <div class="justify-end lg:w-4/5 md:w-4/5 sm:w-3/4 w-1/2 mt-6">
@@ -9,7 +9,7 @@
         <h1 class="text-white text-4xl text-center mt-5 ">Best Leagues</h1>
         <div class="px-5">
             <%= for league <- @best_leagues do %>
-                <.live_component module={BetsnapWeb.MatchSlider} id={league} name="Premier League" league_id={league}/>
+                <.live_component module={BetsnapWeb.MatchSlider} id={league} league_id={league}/>
             <% end %>
         </div>
     </div>

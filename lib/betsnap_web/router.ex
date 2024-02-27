@@ -24,6 +24,8 @@ defmodule BetsnapWeb.Router do
 
       live "/", HomeLive, :home
       live "/my-bets", MyBetsLive, :my_bets
+      live "/country", CountryLive, :country
+      live "/match", MatchLive, :match
     end
   end
 

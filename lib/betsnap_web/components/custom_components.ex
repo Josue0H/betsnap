@@ -95,10 +95,10 @@ defmodule BetsnapWeb.CustomComponents do
                   class="w-5 h-5"
                 />
               <% end %>
-              <li
-              class={if @selected_country === country["code"], do: "text-white ml-2 font-bold",
-              else: "text-white ml-1 mb-1 hover:ml-2 cursor-pointer transition-all"}
-              ><%= country["name"] %></li>
+              <.link
+              href={"/country?code=#{country["code"]}"}
+              class={"text-white ml-1 mb-1 hover:ml-2 cursor-pointer transition-all"}
+              ><%= country["name"] %></.link>
             </div>
           <% end %>
         </ul>

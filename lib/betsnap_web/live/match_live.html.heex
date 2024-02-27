@@ -1,0 +1,27 @@
+<div class="w-full h-screen flex pt-20 justify-center">
+    <%= if @match do  %>
+        <div class="container w-[70%] mt-5">
+            <div class="w-full flex justify-around items-center">
+                <div class="flex flex-col items-center">
+                    <img src={@match["teams"]["home"]["logo"]} alt={ @match["teams"]["home"]["name"]} class="w-48 h-48">
+                    <span class="text-white mt-2"><%=@match["teams"]["home"]["name"]%></span>
+                </div>
+                <span class="text-white text-6xl">VS</span>
+                <div class="flex flex-col items-center">
+                    <img src={@match["teams"]["away"]["logo"]} alt={ @match["teams"]["away"]["name"]} class="w-48 h-48">
+                    <span class="text-white mt-2"><%=@match["teams"]["away"]["name"]%></span>
+                </div>
+            </div>
+            <hr class="border-2 border-white my-5">
+            <div class="flex justify-center items-center">
+                <img src={@match["league"]["logo"]} alt={ @match["league"]["name"]} class="w-auto h-10">
+                <p class="text-white ml-5"><%=@match["league"]["name"]%> - <%=@match["league"]["round"]%></p>
+            </div>
+            <div>
+                <h1 class="text-white text-center mt-5"><%=@match["fixture"]["venue"]["name"]%>, <%=@match["fixture"]["venue"]["city"]%></h1>
+                <h2 class="text-white text-4xl text-center mt-5"><%=@match["competition"]["name"]%></h2>
+                <p class="text-white text-center mt-2"><%=get_date(@match["fixture"]["timestamp"])%></p>
+            </div>
+        </div>
+    <% end %>
+</div>
