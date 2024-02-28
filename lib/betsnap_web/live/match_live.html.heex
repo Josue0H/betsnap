@@ -22,6 +22,7 @@
                 <h2 class="text-white text-4xl text-center mt-5"><%=@match["competition"]["name"]%></h2>
                 <p class="text-white text-center mt-2"><%=get_date(@match["fixture"]["timestamp"])%></p>
             </div>
+            <.live_component module={BetsnapWeb.MatchTabs} id="tabs" match={@match} active_tab={@active_tab}/>
         </div>
     <% end %>
 </div>

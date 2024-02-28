@@ -92,6 +92,84 @@ defmodule BetsnapWeb.Api.SportsAPI do
 
     case http_get(url, headers, query) do
       {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+        # IO.puts "OK"
+        {:ok, Poison.decode!(body)}
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        # IO.puts "Not found"
+        {:error, "Not found"}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        # IO.inspect reason
+        {:error, reason}
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  def get_odds(id) do
+    headers = [{"x-rapidapi-key", @api_key}]
+    url = "/odds"
+
+
+    query = "?fixture=#{id}"
+
+    case http_get(url, headers, query) do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+        {:ok, Poison.decode!(body)}
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        {:error, "Not found"}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, reason}
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  def get_standings(season, league) do
+    headers = [{"x-rapidapi-key", @api_key}]
+    url = "/standings"
+
+
+    query = "?season=#{season}&league=#{league}"
+
+    case http_get(url, headers, query) do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+        {:ok, Poison.decode!(body)}
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        {:error, "Not found"}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, reason}
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  def get_players(id) do
+    headers = [{"x-rapidapi-key", @api_key}]
+    url = "/players"
+
+
+    query = "?team=#{id}&season=2023"
+
+    case http_get(url, headers, query) do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+        {:ok, Poison.decode!(body)}
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        {:error, "Not found"}
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, reason}
+      _ ->
+        {:error, "Unknown error"}
+    end
+  end
+
+  def get_past_fixtures(id, last) do
+    headers = [{"x-rapidapi-key", @api_key}]
+    url = "/fixtures"
+
+    query = "?team=#{id}&last=#{last}"
+
+    case http_get(url, headers, query) do
+      {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
         {:ok, Poison.decode!(body)}
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         {:error, "Not found"}

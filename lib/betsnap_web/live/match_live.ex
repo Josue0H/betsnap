@@ -3,8 +3,23 @@ defmodule BetsnapWeb.MatchLive do
 
   alias BetsnapWeb.Api.SportsAPI
 
-  def mount(socket) do
+  def mount(_params, _session, socket) do
+    socket = assign(socket, match: nil)
+
     {:ok, socket}
+  end
+
+  def handle_params(%{ "id" => id, "tab" => tab }, _uri, socket) do
+
+    {:ok, %{"response" => match}} = SportsAPI.get_match(id)
+
+    match =
+      match
+      |> Enum.at(0)
+
+    socket = assign(socket, match: match, active_tab: String.to_atom(tab))
+
+    {:noreply, socket}
   end
 
   def handle_params(%{ "id" => id }, _uri, socket) do
@@ -15,18 +30,15 @@ defmodule BetsnapWeb.MatchLive do
       match
       |> Enum.at(0)
 
-    socket = assign(socket, match: match)
+    socket = assign(socket, match: match, active_tab: :bets)
 
     {:noreply, socket}
   end
 
   def handle_params(_, _uri, socket) do
-
-    # if there are no params, redirect to home
     {:noreply, redirect(socket, to: "/")}
-
-    {:noreply, socket}
   end
+
 
   def get_date(timestamp) do
     datetime = DateTime.from_unix!(timestamp)
