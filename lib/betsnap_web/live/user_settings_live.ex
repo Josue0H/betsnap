@@ -10,7 +10,7 @@ defmodule BetsnapWeb.UserSettingsLive do
       <:subtitle>Manage your account email address and password settings</:subtitle>
     </.header>
 
-    <div class="space-y-12 divide-y">
+    <div class="mx-auto max-w-sm">
       <div>
         <.simple_form
           for={@email_form}
@@ -69,6 +69,23 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+      <div class="w-full flex justify-around my-5">
+        <.button
+        phx-disable-with="Changing..."
+        phx-click="add_balance"
+        phx-value-balance="100"
+        >+ $100</.button>
+        <.button
+        phx-disable-with="Changing..."
+        phx-click="add_balance"
+        phx-value-balance="200"
+        >+ $200</.button>
+        <.button
+        phx-disable-with="Changing..."
+        phx-click="add_balance"
+        phx-value-balance="500"
+        >+ $500</.button>
+      </div>
     </div>
     """
   end
@@ -101,6 +118,15 @@ defmodule BetsnapWeb.UserSettingsLive do
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
+  end
+
+  def handle_event("add_balance", %{"balance" => balance}, socket) do
+
+    user =
+      socket.assigns.current_user
+      |> Accounts.add_balance(balance)
+
+    {:noreply, socket |> put_flash(:info, "Balance updated successfully.") |> assign(current_user: user) |> redirect(to: "/users/settings")}
   end
 
   def handle_event("validate_email", params, socket) do

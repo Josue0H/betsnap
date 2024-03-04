@@ -23,7 +23,6 @@ defmodule BetsnapWeb.Router do
     live_session :betsnap_session do
 
       live "/", HomeLive, :home
-      live "/my-bets", MyBetsLive, :my_bets
       live "/country", CountryLive, :country
       live "/match", MatchLive, :match
     end
@@ -74,6 +73,8 @@ defmodule BetsnapWeb.Router do
       on_mount: [{BetsnapWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/match/new_bet", MatchLive, :new_bet
+      live "/my-bets", MyBetsLive, :my_bets
     end
   end
 

@@ -108,6 +108,7 @@ defmodule Betsnap.Accounts do
     User.email_changeset(user, attrs, validate_email: false)
   end
 
+
   @doc """
   Emulates that the email will change without actually changing
   it in the database.
@@ -213,6 +214,13 @@ defmodule Betsnap.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  def add_balance(user, balance) do
+    user
+    |> User.add_balance_changeset(balance)
+    |> IO.inspect()
+    |> Repo.update()
   end
 
   ## Session

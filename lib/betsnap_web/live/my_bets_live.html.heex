@@ -1,0 +1,8 @@
+<div class="w-full h-screen flex flex-col pt-[6rem] items-center">
+    <h1 class="text-white text-6xl mb-5">My Bets</h1>
+    <div class="w-9/12 flex flex-col">
+        <%= for bet <- @bets do%>
+            <.bet bet={bet}/>
+        <%end %>
+    </div>
+</div>

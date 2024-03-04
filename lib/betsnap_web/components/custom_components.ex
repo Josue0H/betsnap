@@ -1,49 +1,41 @@
 defmodule BetsnapWeb.CustomComponents do
   use Phoenix.Component
 
-  @spec topbar(any()) :: Phoenix.LiveView.Rendered.t()
+  import Number.Currency
+
   def topbar(assigns) do
     ~H"""
-    <div class="topbar fixed w-full bg-brand h-auto px-5 py-5 flex justify-between align-center shadow-md z-50">
+    <div class="topbar fixed w-full bg-brand h-auto px-5 py-5 flex justify-between items-center shadow-md z-[500]">
         <div class="w-24">
-          <img
-            src={"/images/logo-text.png"}
-            alt="Betsnap"
-            class="w-full h-20px"
-          />
-        </div>
-        <div class="w-1/4">
-          <ul class="w-full flex justify-center">
-            <li>
-              <.link
-                href={"/"}
-                class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
-              >
-                Home
-              </.link>
-            </li>
-            <%= if @current_user do %>
-              <li>
-                <.link
-                  href={"/my-bets"}
-                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
-                >
-                  My Bets
-                </.link>
-              </li>
-            <% end %>
-          </ul>
+          <.link
+            href={"/"}
+            class="text-white font-bold text-2xl"
+          >
+            <img
+              src={"/images/logo-text.png"}
+              alt="Betsnap"
+              class="w-full h-20px hover:scale-[1.03] transition-all"
+            />
+          </.link>
         </div>
         <div class="flex">
           <ul class="w-full flex">
             <%= if @current_user do %>
-              <li class="text-[0.8125rem] leading-6 text-white">
-                <%= @current_user.email %>
+              <li class="text-[0.8125rem] leading-6 text-white mx-5">
+                <span><%= @current_user.username %> | <%= number_to_currency(@current_user.balance) %></span>
+              </li>
+              <li>
+                <.link
+                  href={"/my-bets"}
+                  class="text-white p-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                >
+                  My Bets
+                </.link>
               </li>
               <li>
                 <.link
                   href={"/users/settings"}
-                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                  class="text-white p-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
                 >
                   Settings
                 </.link>
@@ -52,7 +44,7 @@ defmodule BetsnapWeb.CustomComponents do
                 <.link
                   href={"/users/log_out"}
                   method="delete"
-                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                  class="text-white p-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
                 >
                   Log out
                 </.link>
@@ -61,7 +53,7 @@ defmodule BetsnapWeb.CustomComponents do
               <li>
                 <.link
                   href={"/users/register"}
-                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                  class="text-white p-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
                 >
                   Register
                 </.link>
@@ -69,7 +61,7 @@ defmodule BetsnapWeb.CustomComponents do
               <li>
                 <.link
                   href={"/users/log_in"}
-                  class="text-white p-2 rounded-md mx-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
+                  class="text-white p-2 hover:bg-white hover:text-brand font-semibold transition duration-200"
                 >
                   Log in
                 </.link>
@@ -83,7 +75,7 @@ defmodule BetsnapWeb.CustomComponents do
 
   def sidebar(assigns) do
     ~H"""
-      <div class="h-screen p-2 pb-[5rem] bg-brand flex flex-col overflow-auto custom-slider">
+      <div class="h-auto p-2 pb-[5rem] bg-brand flex flex-col overflow-auto custom-slider">
         <p class="font-bold text-white mb-2">Countries</p>
         <ul class="flex flex-col">
           <%= for country <- @countries do %>
@@ -104,6 +96,12 @@ defmodule BetsnapWeb.CustomComponents do
         </ul>
       </div>
     """
+  end
+
+  def decimal_to_currency(decimal) do
+    decimal
+    |> Decimal.to_string()
+    |> String.replace(~r/(\d)(?=(\d{3})+(?!\d))/, "\\1,")
   end
 
 end

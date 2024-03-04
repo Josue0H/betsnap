@@ -69,13 +69,18 @@ defmodule BetsnapWeb.MatchTabs do
   def render(assigns) do
     ~H"""
     <div class="w-full">
-        <div class="grid grid-cols-4 mt-3">
-          <.link
-            patch={"/match?id=#{@match["fixture"]["id"]}&tab=bets"}
-            class={if @active_tab === :bets,
-            do: "cursor-pointer w-full bg-white flex justify-center items-center text-brand",
-            else: "cursor-pointer w-full bg-brand flex justify-center items-center text-white hover:bg-white hover:text-brand py-2 transition-all"}
-          >Bets</.link>
+        <div class={
+          if @match["fixture"]["status"]["short"] === "NS",
+          do: "grid grid-cols-4 mt-3",
+          else: "grid grid-cols-3 mt-3"}>
+          <%= if @match["fixture"]["status"]["short"] === "NS" do %>
+            <.link
+              patch={"/match?id=#{@match["fixture"]["id"]}&tab=bets"}
+              class={if @active_tab === :bets,
+              do: "cursor-pointer w-full bg-white flex justify-center items-center text-brand",
+              else: "cursor-pointer w-full bg-brand flex justify-center items-center text-white hover:bg-white hover:text-brand py-2 transition-all"}
+            >Bets</.link>
+          <% end %>
           <.link
             patch={"/match?id=#{@match["fixture"]["id"]}&tab=standings"}
             class={if @active_tab === :standings,
@@ -97,7 +102,7 @@ defmodule BetsnapWeb.MatchTabs do
         </div>
         <div class="pb-5">
           <%= if @active_tab === :bets do %>
-            <.bets odds={@odds}/>
+            <.bets odds={@odds} match={@match}/>
           <% end %>
           <%= if @active_tab === :standings do %>
             <.standings standings={@standings} match={@match}/>
@@ -116,8 +121,8 @@ defmodule BetsnapWeb.MatchTabs do
   def bets(assigns) do
     ~H"""
       <div class="w-full flex flex-col justify-center p-5">
-          <%= for odd <- assigns.odds do %>
-            <.odd odd={odd} />
+          <%= for odd <- Enum.slice(assigns.odds, 0..11) do %>
+            <.odd odd={odd} match={assigns.match}/>
           <% end %>
       </div>
     """
@@ -126,6 +131,7 @@ defmodule BetsnapWeb.MatchTabs do
   def odd(assigns) do
 
     odd = assigns.odd
+    match = assigns.match
 
     ~H"""
       <div>
@@ -133,10 +139,12 @@ defmodule BetsnapWeb.MatchTabs do
         <h1 class="text-white text-bold"><%= odd["name"]%></h1>
         <div class="grid grid-cols-6 mt-2">
           <%= for bet <- odd["values"] do %>
-            <div class="flex flex-col justify-center items-center p-2 bg-dark cursor-pointer border-[1px] border-brand hover:bg-brand transition-all">
+            <.link
+            href={"/match/new_bet?id=#{match["fixture"]["id"]}&odd=#{bet["odd"]}&value=#{bet["value"]}&bet=#{odd["id"]}"}
+            class="flex flex-col justify-center items-center p-2 bg-dark cursor-pointer border-[1px] border-brand hover:bg-brand transition-all">
               <span class="text-white"><%= bet["value"]%></span>
               <span class="text-white"><%= bet["odd"]%></span>
-            </div>
+            </.link>
           <% end %>
         </div>
       </div>

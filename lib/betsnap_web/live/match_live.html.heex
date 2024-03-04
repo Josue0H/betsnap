@@ -5,11 +5,28 @@
                 <div class="flex flex-col items-center">
                     <img src={@match["teams"]["home"]["logo"]} alt={ @match["teams"]["home"]["name"]} class="w-48 h-48">
                     <span class="text-white mt-2"><%=@match["teams"]["home"]["name"]%></span>
+                    <%= if @match["fixture"]["status"]["short"] != "NS" do %>
+                        <span class="text-white text-6xl mt-2"><%= @match["goals"]["home"] %></span>
+                    <% end %>
                 </div>
-                <span class="text-white text-6xl">VS</span>
+                <%= if @match["fixture"]["status"]["short"] == "FT" do %>
+                    <span class="text-white text-6xl">FT</span>
+                <% end %>
+                <%= if @match["fixture"]["status"]["short"] == "NS" do %>
+                    <span class="text-white text-6xl">VS</span>
+                <% end %>
+                <%= if @match["fixture"]["status"]["short"] != "NS" && @match["fixture"]["status"]["short"] != "FT" do %>
+                    <div class="flex flex-col items-center">
+                        <span class="text-white text-xs">Time</span>
+                        <span class="text-white text-6xl"><%= @match["fixture"]["status"]["elapsed"]%></span>
+                    </div>
+                <% end %>
                 <div class="flex flex-col items-center">
                     <img src={@match["teams"]["away"]["logo"]} alt={ @match["teams"]["away"]["name"]} class="w-48 h-48">
                     <span class="text-white mt-2"><%=@match["teams"]["away"]["name"]%></span>
+                    <%= if @match["fixture"]["status"]["short"] !== "NS" do %>
+                        <span class="text-white text-6xl mt-2"><%= @match["goals"]["away"] %></span>
+                    <% end %>
                 </div>
             </div>
             <hr class="border-2 border-white my-5">
@@ -24,5 +41,37 @@
             </div>
             <.live_component module={BetsnapWeb.MatchTabs} id="tabs" match={@match} active_tab={@active_tab}/>
         </div>
+        <%= if @show_modal do%>
+            <.modal id="new-bet-modal" show={@show_modal} on_cancel={JS.navigate(~p"/match?id=#{@match["fixture"]["id"]}")}>
+                <div class="flex">
+                    <h6 class="text-brand font-bold text-3xl"><%= @value %></h6>
+                    <h6 class="mx-2 text-dark font-bold text-3xl"><%= @odd %></h6>
+                </div>
+                <span><%= @match["teams"]["home"]["name"] %> vs <%= @match["teams"]["away"]["name"] %></span>
+                <div class="flex justify-around items-center mt-5">
+                    <form
+                        phx-submit="new_bet"
+                        phx-change="new_stake"
+                        phx-value-fixture_id={@match["fixture"]["id"]}
+                        phx-value-odd={@odd}
+                        phx-value-value={@value}
+                        phx-value-bet={@bet}
+                        class="flex justify-around items-center w-full h-10"
+                    >
+                        <input type="text" class="w-1/2 h-10 border-2 border-brand text-center focus:border-dark" placeholder="Stake" name="stake" value={@stake}/>
+                        <button 
+                            class="w-1/2 h-10 bg-brand text-white border-dark border-y-2 border-e-2 hover:bg-white hover:text-dark transition-all"
+                            type="submit"
+                            phx-disable-with="Placing Bet..."
+                        >Bet</button>
+                    </form>
+                    <%= if @stake !== "" do %>
+                        <span class="mx-5 text-3xl"><%= number_to_currency(Decimal.mult(@stake, @odd)) %></span>
+                    <% else %>
+                        <span class="mx-5 text-3xl">$0.00</span>
+                    <% end %>
+                </div>
+            </.modal>
+        <% end %>
     <% end %>
 </div>

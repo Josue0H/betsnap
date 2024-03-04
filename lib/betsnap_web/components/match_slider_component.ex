@@ -14,6 +14,8 @@ defmodule BetsnapWeb.MatchSlider do
 
     {:ok, %{"response" => matches}} = SportsAPI.get_leagues_matches(assigns.id, today, next_week)
 
+
+
     socket = assign(socket, matches: matches)
 
     {:ok, socket}
@@ -65,6 +67,15 @@ defmodule BetsnapWeb.MatchSlider do
           <img src={@match["teams"]["away"]["logo"]} alt={@match["teams"]["away"]["name"]} class="w-12 h-12"/>
         <% else %>
           <span class="text-white font-bold"><%= @match["teams"]["away"]["name"] %></span>
+        <% end %>
+      </div>
+      <div class="w-full flex justify-center items-center">
+        <%= if @match["fixture"]["status"]["short"] === "FT" do %>
+          <span class="text-white text-center">FT <%= @match["goals"]["home"] %> - <%= @match["goals"]["away"] %></span>
+        <% end %>
+        <%= if @match["fixture"]["status"]["short"] != "FT" && @match["fixture"]["status"]["short"] != "NS" do %>
+          <div class="h-2 w-2 bg-[green] mx-1 rounded"></div>
+          <span class="text-white text-center">LIVE</span>
         <% end %>
       </div>
     </.link>

@@ -3,6 +3,8 @@ defmodule Betsnap.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    field :username, :string
+    field :balance, :decimal
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
@@ -36,10 +38,19 @@ defmodule Betsnap.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:username, :email, :password])
     |> validate_email(opts)
     |> validate_password(opts)
   end
+
+  def add_balance_changeset(user, balance) do
+
+    new_balance = Decimal.add(user.balance, balance)
+
+    user
+    |> cast(%{balance: new_balance}, [:balance])
+  end
+
 
   defp validate_email(changeset, opts) do
     changeset
