@@ -70,21 +70,15 @@ defmodule BetsnapWeb.UserSettingsLive do
         </.simple_form>
       </div>
       <div class="w-full flex justify-around my-5">
-        <.button
-        phx-disable-with="Changing..."
-        phx-click="add_balance"
-        phx-value-balance="100"
-        >+ $100</.button>
-        <.button
-        phx-disable-with="Changing..."
-        phx-click="add_balance"
-        phx-value-balance="200"
-        >+ $200</.button>
-        <.button
-        phx-disable-with="Changing..."
-        phx-click="add_balance"
-        phx-value-balance="500"
-        >+ $500</.button>
+        <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="100">
+          + $100
+        </.button>
+        <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="200">
+          + $200
+        </.button>
+        <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="500">
+          + $500
+        </.button>
       </div>
     </div>
     """
@@ -121,12 +115,15 @@ defmodule BetsnapWeb.UserSettingsLive do
   end
 
   def handle_event("add_balance", %{"balance" => balance}, socket) do
-
     user =
       socket.assigns.current_user
       |> Accounts.add_balance(balance)
 
-    {:noreply, socket |> put_flash(:info, "Balance updated successfully.") |> assign(current_user: user) |> redirect(to: "/users/settings")}
+    {:noreply,
+     socket
+     |> put_flash(:info, "Balance updated successfully.")
+     |> assign(current_user: user)
+     |> redirect(to: "/users/settings")}
   end
 
   def handle_event("validate_email", params, socket) do

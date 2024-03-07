@@ -44,13 +44,11 @@ defmodule Betsnap.Accounts.User do
   end
 
   def add_balance_changeset(user, balance) do
-
     new_balance = Decimal.add(user.balance, balance)
 
     user
     |> cast(%{balance: new_balance}, [:balance])
   end
-
 
   defp validate_email(changeset, opts) do
     changeset

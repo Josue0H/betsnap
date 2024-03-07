@@ -62,7 +62,8 @@ defmodule Betsnap.MixProject do
       {:httpoison, "~> 2.0"},
       {:poison, "~> 5.0"},
       {:timex, "~> 3.7"},
-      {:number, "~> 1.0.1"}
+      {:number, "~> 1.0.1"},
+      {:dotenv, "~> 3.1"}
     ]
   end
 

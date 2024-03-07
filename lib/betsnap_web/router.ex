@@ -21,7 +21,6 @@ defmodule BetsnapWeb.Router do
     pipe_through :browser
 
     live_session :betsnap_session do
-
       live "/", HomeLive, :home
       live "/country", CountryLive, :country
       live "/match", MatchLive, :match

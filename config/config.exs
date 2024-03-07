@@ -9,7 +9,9 @@ import Config
 
 config :betsnap,
   ecto_repos: [Betsnap.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  api_key: System.get_env("API_KEY"),
+  api_url: System.get_env("API_URL")
 
 # Configures the endpoint
 config :betsnap, BetsnapWeb.Endpoint,

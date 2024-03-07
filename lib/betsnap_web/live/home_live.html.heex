@@ -1,16 +1,35 @@
-<.flash_group flash={@flash} />
-<div class="w-full h-screen flex">    
-    <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-screen fixed top-[4.3rem] pb-[4.3rem]">
-        <BetsnapWeb.CustomComponents.sidebar countries={@countries}/>
+<div class="w-full h-screen flex">
+  <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-screen fixed top-[4.3rem] pb-[4.3rem]">
+    <div class="h-full p-2 pb-[5rem] bg-brand flex flex-col overflow-auto custom-slider">
+      <%= if @loading_countries do %>
+        <div class="text-center text-white">Loading...</div>
+      <% else %>
+        <BetsnapWeb.CustomComponents.sidebar countries={@countries} />
+      <% end %>
     </div>
-    <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-full"></div>
-    <div class="justify-end lg:w-4/5 md:w-4/5 sm:w-3/4 w-1/2 mt-6">
-        <.live_component module={BetsnapWeb.ImageSlider} id="slider" />
-        <h1 class="text-white text-4xl text-center mt-5 ">Best Leagues</h1>
-        <div class="px-5">
-            <%= for league <- @best_leagues do %>
-                <.live_component module={BetsnapWeb.MatchSlider} id={league} league_id={league}/>
-            <% end %>
+  </div>
+  
+  <div class="lg:w-1/5 md:w-1/5 sm:w-1/4 w-1/2 h-full"></div>
+  
+  <div class="justify-end lg:w-4/5 md:w-4/5 sm:w-3/4 w-1/2 mt-6">
+    <.live_component
+      module={BetsnapWeb.ImageSlider}
+      id="slider"
+      value={@value}
+      elements={@elements}
+    />
+    <h1 class="text-white text-4xl text-center mt-5 ">Best Leagues</h1>
+    
+    <div class="px-5">
+      <%= if @loading_leagues do %>
+        <div class="w-full h-full flex justify-center mt-5">
+          <span class="text-white">Loading...</span>
         </div>
+      <% else %>
+        <%= for matches <- @leagues do %>
+          <.live_component module={BetsnapWeb.MatchSlider} id={matches} matches={matches} />
+        <% end %>
+      <% end %>
     </div>
+  </div>
 </div>

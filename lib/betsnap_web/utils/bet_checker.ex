@@ -1,7 +1,7 @@
 defmodule BetsnapWeb.Utils.BetChecker do
-
   def check_bet(match, bet, value) do
-    IO.puts "Checking bet... #{bet} #{value}"
+    IO.puts("Checking bet... #{bet} #{value}")
+
     case bet do
       "1" -> match_winner(match, value)
       "2" -> home_away(match, value)
@@ -20,7 +20,6 @@ defmodule BetsnapWeb.Utils.BetChecker do
   end
 
   def match_winner(match, value) do
-
     case match do
       %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
         cond do
@@ -87,9 +86,14 @@ defmodule BetsnapWeb.Utils.BetChecker do
     case match do
       %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
         total_goals = home_goals + away_goals
-        betcond = String.split(value, " ")[0]
+
+        betcond =
+          String.split(value, " ")
+          |> Enum.at(0)
+
         goals =
-          String.split(value, " ")[1]
+          String.split(value, " ")
+          |> Enum.at(1)
 
         cond do
           Decimal.compare(total_goals, goals) === :lt && betcond == "Under" ->
@@ -111,9 +115,14 @@ defmodule BetsnapWeb.Utils.BetChecker do
     case match do
       %{"score" => %{"halftime" => %{"home" => home_goals, "away" => away_goals}}} ->
         total_first_half_goals = home_goals + away_goals
-        betcond = String.split(value, " ")[0]
+
+        betcond =
+          String.split(value, " ")
+          |> Enum.at(0)
+
         goals =
-          String.split(value, " ")[1]
+          String.split(value, " ")
+          |> Enum.at(1)
 
         cond do
           Decimal.compare(total_first_half_goals, goals) === :lt && betcond == "Under" ->
@@ -133,11 +142,20 @@ defmodule BetsnapWeb.Utils.BetChecker do
 
   def goals_over_under_second_half(match, value) do
     case match do
-      %{"goals" => %{"home" => fulltime_home_goals, "away" => fulltime_away_goals}, "score" => %{"halftime" => %{"home" => home_goals, "away" => away_goals}}} ->
-        total_second_half_goals = fulltime_home_goals + fulltime_away_goals - (home_goals + away_goals)
-        betcond = String.split(value, " ")[0]
+      %{
+        "goals" => %{"home" => fulltime_home_goals, "away" => fulltime_away_goals},
+        "score" => %{"halftime" => %{"home" => home_goals, "away" => away_goals}}
+      } ->
+        total_second_half_goals =
+          fulltime_home_goals + fulltime_away_goals - (home_goals + away_goals)
+
+        betcond =
+          String.split(value, " ")
+          |> Enum.at(0)
+
         goals =
-          String.split(value, " ")[1]
+          String.split(value, " ")
+          |> Enum.at(1)
 
         cond do
           Decimal.compare(total_second_half_goals, goals) === :lt && betcond == "Under" ->
@@ -253,8 +271,14 @@ defmodule BetsnapWeb.Utils.BetChecker do
   def exact_score(match, value) do
     case match do
       %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        bet_home = String.split(value, ":")[0]
-        bet_away = String.split(value, ":")[1]
+        bet_home =
+          String.split(value, ":")
+          |> Enum.at(0)
+
+        bet_away =
+          String.split(value, ":")
+          |> Enum.at(1)
+
         cond do
           home_goals == bet_home && away_goals == bet_away ->
             {:ok, "win"}
@@ -267,5 +291,4 @@ defmodule BetsnapWeb.Utils.BetChecker do
         {:error, "Invalid match"}
     end
   end
-
 end

@@ -4,29 +4,45 @@ defmodule BetsnapWeb.CountryLive do
   alias BetsnapWeb.Api.SportsAPI
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, leagues: [])}
+    {:ok, assign(socket, leagues: [], country: %{}, loading_leagues: true, loading_country: true)}
   end
 
   def handle_params(%{"code" => code}, _uri, socket) do
+    with {:ok, %{"response" => country}} <- SportsAPI.get_country(code),
+         {:ok, %{"response" => leagues}} <- SportsAPI.get_country_leagues(code) do
+      ids = Enum.map(leagues, fn league -> league["league"]["id"] end)
+      send(self(), {:country_loaded, Enum.at(country, 0)})
 
-    {:ok, %{ "response" => country }} = SportsAPI.get_country(code)
+      today = Date.utc_today()
+      next_week = Date.add(today, 7)
 
-    {:ok, %{ "response" => leagues }} = SportsAPI.get_country_leagues(code)
+      leagues =
+        Enum.map(ids, fn league_id ->
+          case SportsAPI.get_leagues_matches(league_id, today, next_week) do
+            {:ok, response} ->
+              %{"response" => fixtures} = response
+              fixtures
 
-    ids = Enum.map(leagues, fn league -> league["league"]["id"] end)
+            {:error, _} ->
+              {:noreply, assign(socket, loading_leagues: false)}
+          end
+        end)
 
-    country = Enum.at(country, 0)
-
-    socket = assign(
-      socket,
-      leagues: ids,
-      country: country
-    )
-
-    IO.inspect(country)
+      send(self(), {:leagues_loaded, leagues})
+      {:noreply, socket}
+    else
+      {:error, _} ->
+        {:noreply, assign(socket, loading_leagues: false)}
+    end
 
     {:noreply, socket}
   end
 
+  def handle_info({:country_loaded, country}, socket) do
+    {:noreply, assign(socket, loading_country: false, country: country)}
+  end
 
+  def handle_info({:leagues_loaded, leagues}, socket) do
+    {:noreply, assign(socket, loading_leagues: false, leagues: leagues)}
+  end
 end
