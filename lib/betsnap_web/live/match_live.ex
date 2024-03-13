@@ -27,21 +27,15 @@ defmodule BetsnapWeb.MatchLive do
   end
 
   def handle_params(%{"id" => id, "odd" => odd, "value" => value, "bet" => bet}, _uri, socket) do
-    status = load_match(id, socket)
+    load_match(id, socket)
 
-    active_tab =
-      if status == "NS" do
-        :bets
-      else
-        :standings
-      end
 
     socket =
       assign(
         socket,
         match: nil,
         loading_match: true,
-        active_tab: active_tab,
+        active_tab: :standings,
         odd: odd,
         value: value,
         show_modal: true,
@@ -61,17 +55,10 @@ defmodule BetsnapWeb.MatchLive do
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
-    status = load_match(id, socket)
-
-    active_tab =
-      if status == "NS" do
-        :bets
-      else
-        :standings
-      end
+    load_match(id, socket)
 
     socket =
-      assign(socket, match: nil, loading_match: true, active_tab: active_tab, show_modal: false)
+      assign(socket, match: nil, loading_match: true, active_tab: :standings, show_modal: false)
 
     {:noreply, socket}
   end
