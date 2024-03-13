@@ -218,7 +218,6 @@ defmodule Betsnap.Accounts do
   def add_balance(user, balance) do
     user
     |> User.add_balance_changeset(balance)
-    |> IO.inspect()
     |> Repo.update()
   end
 

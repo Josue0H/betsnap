@@ -10,7 +10,9 @@ defmodule Betsnap.AccountsFixtures do
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_user_email(),
-      password: valid_user_password()
+      password: valid_user_password(),
+      username: "user#{System.unique_integer()}",
+      balance: 1000.0
     })
   end
 

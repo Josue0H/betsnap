@@ -9,22 +9,24 @@ defmodule Betsnap.Bets do
   alias BetsnapWeb.Utils.BetChecker
 
   def create_bet(attrs) do
-    user = Repo.get!(User, attrs["user_id"])
 
-    if user.balance < attrs["stake"] do
-      {:error, "Insufficient balance"}
+    case Repo.get(User, attrs["user_id"]) do
+      nil -> {:error, "User not found"}
+      user ->
+        if Decimal.compare(user.balance, attrs["stake"]) == :lt do
+          {:error, "Insufficient balance"}
+        else
+          Repo.transaction(fn ->
+            user
+            |> Accounts.add_balance(Decimal.mult(attrs["stake"], -1))
+
+            %Betsnap.Bet{}
+            |> Betsnap.Bet.changeset(attrs)
+            |> Betsnap.Repo.insert()
+          end)
+        end
     end
 
-    Repo.transaction(fn ->
-      user = Repo.get!(User, attrs["user_id"])
-
-      user
-      |> Accounts.add_balance(Decimal.mult(attrs["stake"], -1))
-
-      %Betsnap.Bet{}
-      |> Betsnap.Bet.changeset(attrs)
-      |> Betsnap.Repo.insert()
-    end)
   end
 
   def get_bets(user_id) do
@@ -96,17 +98,25 @@ defmodule Betsnap.Bets do
         end
       end)
 
-    additional_info
+    {:ok, additional_info}
   end
 
   def delete_bet(id) do
-    bet = Betsnap.Repo.get(Betsnap.Bet, id)
 
-    user = Repo.get!(User, bet.user_id)
+    case Betsnap.Repo.get(Betsnap.Bet, id) do
+      nil -> {:error, "Bet not found"}
+      bet ->
+        case Repo.get(User, bet.user_id) do
+          nil -> {:error, "User not found"}
+          user ->
+            Repo.transaction(fn ->
+              user
+              |> Accounts.add_balance(bet.stake)
 
-    user
-    |> Accounts.add_balance(bet.stake)
+              Betsnap.Repo.delete(bet)
+            end)
 
-    Betsnap.Repo.delete(bet)
+        end
+    end
   end
 end
