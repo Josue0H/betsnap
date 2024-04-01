@@ -16,7 +16,7 @@ defmodule BetsnapWeb.UserLoginLive do
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
-        <.input field={@form[:email]} type="email" label="Email" required />
+        <.input field={@form[:identifier]} type="text" label="Email or Username" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
@@ -36,8 +36,8 @@ defmodule BetsnapWeb.UserLoginLive do
   end
 
   def mount(_params, _session, socket) do
-    email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "user")
+    identifier = live_flash(socket.assigns.flash, :identifier)
+    form = to_form(%{"identifier" => identifier}, as: "user")
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end

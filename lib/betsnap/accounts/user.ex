@@ -114,8 +114,18 @@ defmodule Betsnap.Accounts.User do
     |> cast(attrs, [:username])
     |> validate_required([:username])
     |> validate_length(:username, min: 3, max: 20)
+    |> unsafe_validate_unique(:username, Betsnap.Repo)
+    |> unique_constraint(:username)
   end
 
+  @spec password_changeset(
+          {map(), map()}
+          | %{
+              :__struct__ => atom() | %{:__changeset__ => map(), optional(any()) => any()},
+              optional(atom()) => any()
+            },
+          :invalid | %{optional(:__struct__) => none(), optional(atom() | binary()) => any()}
+        ) :: Ecto.Changeset.t()
   @doc """
   A user changeset for changing the password.
 

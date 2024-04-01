@@ -44,6 +44,16 @@ defmodule Betsnap.Accounts do
     if User.valid_password?(user, password), do: user
   end
 
+  def get_user_by_identifier_password(identifier, password)
+      when is_binary(identifier) and is_binary(password) do
+
+    user = case String.contains?(identifier, "@") do
+      true -> Repo.get_by(User, email: identifier)
+      false -> Repo.get_by(User, username: identifier)
+    end
+    if User.valid_password?(user, password), do: user
+  end
+
   @doc """
   Gets a single user.
 
