@@ -6,7 +6,7 @@ defmodule BetsnapWeb.MyBetsLive do
   import Number.Currency
 
   def mount(_params, _session, socket) do
-    with bets <- Bets.get_bets(socket.assigns.current_user.id) do
+    with {:ok, bets} <- Bets.get_bets(socket.assigns.current_user.id) do
       send(self(), {:bets_loaded, bets})
     else
       _ -> {:error, "Could not get bets"}

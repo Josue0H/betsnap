@@ -109,6 +109,13 @@ defmodule Betsnap.Accounts.User do
     end
   end
 
+  def username_changeset(user, attrs, _opts \\ []) do
+    user
+    |> cast(attrs, [:username])
+    |> validate_required([:username])
+    |> validate_length(:username, min: 3, max: 20)
+  end
+
   @doc """
   A user changeset for changing the password.
 

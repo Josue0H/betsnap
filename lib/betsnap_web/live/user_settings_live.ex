@@ -13,6 +13,24 @@ defmodule BetsnapWeb.UserSettingsLive do
     <div class="mx-auto max-w-sm">
       <div>
         <.simple_form
+          for={@username_form}
+          id="username_form"
+          phx-submit="update_username"
+          phx-change="validate_username"
+        >
+          <.input
+            field={@username_form[:email]}
+            type="hidden"
+            id="hidden_user_email"
+          />
+          <.input field={@username_form[:username]} type="text" label="Username" required name="current_username"/>
+          <:actions>
+            <.button phx-disable-with="Saving...">Save Changes</.button>
+          </:actions>
+        </.simple_form>
+      </div>
+      <div>
+        <.simple_form
           for={@email_form}
           id="email_form"
           phx-submit="update_email"
@@ -99,6 +117,7 @@ defmodule BetsnapWeb.UserSettingsLive do
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_user
+    username_changeset = Accounts.change_username(user)
     email_changeset = Accounts.change_user_email(user)
     password_changeset = Accounts.change_user_password(user)
 
@@ -107,7 +126,9 @@ defmodule BetsnapWeb.UserSettingsLive do
       |> assign(:current_password, nil)
       |> assign(:email_form_current_password, nil)
       |> assign(:current_email, user.email)
+      |> assign(:current_username, user.username)
       |> assign(:email_form, to_form(email_changeset))
+      |> assign(:username_form, to_form(username_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
 
@@ -124,6 +145,37 @@ defmodule BetsnapWeb.UserSettingsLive do
      |> put_flash(:info, "Balance updated successfully.")
      |> assign(current_user: user)
      |> redirect(to: "/users/settings")}
+  end
+
+  def handle_event("validate_username", params, socket) do
+    %{"current_username" => username, "user" => user_params} = params
+
+    username_form =
+      socket.assigns.current_user
+      |> Accounts.change_username(user_params)
+      |> Map.put(:action, :validate)
+      |> to_form()
+
+    {:noreply, assign(socket, username_form: username_form, current_username: username)}
+  end
+
+
+  def handle_event("update_username", params, socket) do
+    %{"current_username" => username, "user" => user_params} = params
+    user = socket.assigns.current_user
+
+    case Accounts.update_user_username(user, %{ username: username }) do
+      {:ok, user} ->
+        username_form =
+          user
+          |> Accounts.change_username(user_params)
+          |> to_form()
+
+        {:noreply, socket |> assign(username_form: username_form) |> put_flash(:info, "Username updated successfully." ) |> redirect(to: "/users/settings")}
+
+      {:error, changeset} ->
+        {:noreply, socket |> assign(username_form: to_form(changeset)) |> put_flash(:error, "Username could not be updated.")}
+    end
   end
 
   def handle_event("validate_email", params, socket) do

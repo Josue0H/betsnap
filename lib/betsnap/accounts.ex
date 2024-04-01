@@ -108,6 +108,10 @@ defmodule Betsnap.Accounts do
     User.email_changeset(user, attrs, validate_email: false)
   end
 
+  def change_username(user, attrs \\ %{}) do
+    User.username_changeset(user, attrs)
+  end
+
   @doc """
   Emulates that the email will change without actually changing
   it in the database.
@@ -126,6 +130,12 @@ defmodule Betsnap.Accounts do
     |> User.email_changeset(attrs)
     |> User.validate_current_password(password)
     |> Ecto.Changeset.apply_action(:update)
+  end
+
+  def update_user_username(user, attrs) do
+    user
+    |> User.username_changeset(attrs)
+    |> Repo.update()
   end
 
   @doc """
