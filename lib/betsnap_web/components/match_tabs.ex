@@ -21,45 +21,49 @@ defmodule BetsnapWeb.MatchTabs do
   end
 
   def update(assigns, socket) do
-    with {:ok, %{"response" => odds}} <- SportsAPI.get_odds(assigns.match["fixture"]["id"]),
-         {:ok, %{"response" => standings}} <-
-           SportsAPI.get_standings(
-             assigns.match["league"]["season"],
-             assigns.match["league"]["id"]
-           ),
-         {:ok, %{"response" => players_home}} <-
-           SportsAPI.get_players(assigns.match["teams"]["home"]["id"]),
-         {:ok, %{"response" => players_away}} <-
-           SportsAPI.get_players(assigns.match["teams"]["away"]["id"]),
-         {:ok, %{"response" => matches_home}} <-
-           SportsAPI.get_past_fixtures(assigns.match["teams"]["home"]["id"], @last_matches),
-         {:ok, %{"response" => matches_awaiy}} <-
-           SportsAPI.get_past_fixtures(assigns.match["teams"]["away"]["id"], @last_matches) do
+    odds_task = Task.async(fn -> SportsAPI.get_odds(assigns.match["fixture"]["id"]) end)
+    standings_task = Task.async(fn -> SportsAPI.get_standings(assigns.match["league"]["season"], assigns.match["league"]["id"]) end)
+    players_home_task = Task.async(fn -> SportsAPI.get_players(assigns.match["teams"]["home"]["id"]) end)
+    players_away_task = Task.async(fn -> SportsAPI.get_players(assigns.match["teams"]["away"]["id"]) end)
+    matches_home_task = Task.async(fn -> SportsAPI.get_past_fixtures(assigns.match["teams"]["home"]["id"], @last_matches) end)
+    matches_away_task = Task.async(fn -> SportsAPI.get_past_fixtures(assigns.match["teams"]["away"]["id"], @last_matches) end)
 
-      odds = if Enum.at(odds, 0), do:
-        odds
-        |> Enum.at(0)
-        |> Map.get("bookmakers")
-        |> Enum.at(0)
-        |> Map.get("bets"),
-        else: []
+    {:ok, odds_response} = Task.await(odds_task)
+    {:ok, standings_response} = Task.await(standings_task)
+    {:ok, players_home_response} = Task.await(players_home_task)
+    {:ok, players_away_response} = Task.await(players_away_task)
+    {:ok, matches_home_response} = Task.await(matches_home_task)
+    {:ok, matches_away_response} = Task.await(matches_away_task)
+
+    IO.inspect(players_home_response, label: "Players Home")
+
+
+      odds =
+        odds_response
+        |> Map.get("response", [])
+        |> List.first()
+        |> Map.get("bookmakers", [])
+        |> List.first()
+        |> Map.get("bets", [])
 
       standings =
-        standings
-        |> Enum.at(0)
-        |> Map.get("league")
-        |> Map.get("standings")
-        |> Enum.at(0)
-        |> Enum.sort_by(fn x -> x["rank"] end)
+        standings_response
+        |> Map.get("response", [])
+        |> List.first()
+        |> Map.get("league", [])
+        |> Map.get("standings", [])
+        |> List.first()
+        |> Enum.sort_by(& &1["rank"])
+
 
       players = %{
-        home: players_home,
-        away: players_away
+        home: players_home_response |> Map.get("response", []),
+        away: players_away_response |> Map.get("response", [])
       }
 
       matches = %{
-        home: matches_home,
-        away: matches_awaiy
+        home: matches_home_response |> Map.get("response", []),
+        away: matches_away_response |> Map.get("response", [])
       }
 
       socket =
@@ -73,10 +77,6 @@ defmodule BetsnapWeb.MatchTabs do
         )
 
       {:ok, socket}
-    else
-      {:error, _} ->
-        {:ok, socket}
-    end
   end
 
   def render(assigns) do

@@ -8,34 +8,40 @@ defmodule BetsnapWeb.CountryLive do
   end
 
   def handle_params(%{"code" => code}, _uri, socket) do
-    with {:ok, %{"response" => country}} <- SportsAPI.get_country(code),
-         {:ok, %{"response" => leagues}} <- SportsAPI.get_country_leagues(code) do
-      ids = Enum.map(leagues, fn league -> league["league"]["id"] end)
-      send(self(), {:country_loaded, Enum.at(country, 0)})
 
-      today = Date.utc_today()
-      next_week = Date.add(today, 7)
+    case SportsAPI.get_country(code) do
+      {:ok, %{"response" => country}} ->
+        send(self(), {:country_loaded, Enum.at(country, 0)})
 
-      leagues =
-        Enum.map(ids, fn league_id ->
-          case SportsAPI.get_leagues_matches(league_id, today, next_week) do
-            {:ok, response} ->
-              %{"response" => fixtures} = response
-              fixtures
+      {:error, _} ->
+        {:noreply, assign(socket, loading_country: false)}
+    end
 
-            {:error, _} ->
-              {:noreply, assign(socket, loading_leagues: false)}
-          end
-        end)
+    case SportsAPI.get_country_leagues(code) do
+      {:ok, %{"response" => leagues}} ->
+        ids = Enum.map(leagues, fn league -> league["league"]["id"] end)
 
-      send(self(), {:leagues_loaded, leagues})
-      {:noreply, socket}
-    else
+        today = Date.utc_today()
+        next_week = Date.add(today, 7)
+
+        tasks =
+          Enum.map(ids, fn league_id ->
+            Task.async(fn -> SportsAPI.get_leagues_matches(league_id, today, next_week) end)
+          end)
+
+        results =
+          tasks
+          |> Enum.map(&Task.await/1)
+          |> Enum.map(fn
+            {:ok, %{"response" => fixtures}} -> fixtures
+            {:error, _} -> []
+          end)
+
+        send(self(), {:leagues_loaded, results})
+        {:noreply, socket}
       {:error, _} ->
         {:noreply, assign(socket, loading_leagues: false)}
     end
-
-    {:noreply, socket}
   end
 
   def handle_info({:country_loaded, country}, socket) do

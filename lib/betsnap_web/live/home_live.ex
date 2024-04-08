@@ -65,7 +65,7 @@ defmodule BetsnapWeb.HomeLive do
       assign(
         socket,
         countries: data.countries,
-        leagues: data.leagues,
+        leagues: data.leagues
       )
 
     {:noreply, socket}
