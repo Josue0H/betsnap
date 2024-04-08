@@ -17,7 +17,8 @@ defmodule Betsnap.Application do
       # Start a worker by calling: Betsnap.Worker.start_link(arg)
       # {Betsnap.Worker, arg},
       # Start to serve requests, typically the last entry
-      BetsnapWeb.Endpoint
+      BetsnapWeb.Endpoint,
+      {Betsnap.HomeServer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

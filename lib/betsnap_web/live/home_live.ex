@@ -1,15 +1,13 @@
 defmodule BetsnapWeb.HomeLive do
   use BetsnapWeb, :live_view
 
-  alias BetsnapWeb.Api.SportsAPI
-
-  @premier_league_id 39
-  @liga_mx_id 262
-  @bundesliga_id 78
-  @la_liga_id 140
-  @serie_a_id 135
+  alias Betsnap.HomeServer
 
   def mount(_params, _session, socket) do
+    if connected?(socket) do
+      HomeServer.subscribe()
+    end
+
     elements = [
       %{
         id: 0,
@@ -31,61 +29,45 @@ defmodule BetsnapWeb.HomeLive do
       }
     ]
 
+    home_data = HomeServer.get_home_data()
+
     socket =
       assign(
         socket,
-        countries: [],
-        loading_countries: true,
-        leagues: [],
-        loading_leagues: true,
+        countries: home_data.countries,
+        leagues: home_data.leagues,
         value: 0,
-        elements: elements,
-        best_leagues: [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id]
+        elements: elements
       )
 
-    case SportsAPI.get_countries() do
-      {:ok, response} ->
-        %{"response" => countries} = response
-        send(self(), {:countries_loaded, countries})
-        {:noreply, socket}
-
-      {:error, _} ->
-        {:noreply, assign(socket, loading_countries: false)}
-    end
-
-    today = Date.utc_today()
-    next_week = Date.add(today, 7)
-
-    best_leagues = [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id]
-
-    leagues =
-      Enum.map(best_leagues, fn league_id ->
-        case SportsAPI.get_leagues_matches(league_id, today, next_week) do
-          {:ok, response} ->
-            %{"response" => fixtures} = response
-            fixtures
-
-          {:error, _} ->
-            {:noreply, assign(socket, loading_leagues: false)}
-        end
-      end)
-
-    send(self(), {:leagues_loaded, leagues})
-
     {:ok, socket}
+
   end
 
-  def handle_info({:countries_loaded, countries}, socket) do
-    {:noreply, assign(socket, loading_countries: false, countries: countries)}
-  end
+  # def handle_info({:countries_loaded, countries}, socket) do
+  #   {:noreply, assign(socket, loading_countries: false, countries: countries)}
+  # end
 
-  def handle_info({:leagues_loaded, leagues}, socket) do
-    {:noreply, assign(socket, loading_leagues: false, leagues: leagues)}
-  end
+  # def handle_info({:leagues_loaded, leagues}, socket) do
+  #   {:noreply, assign(socket, loading_leagues: false, leagues: leagues)}
+  # end
 
   def handle_info(:next_slide, socket) do
     value = rem(socket.assigns.value + 1, length(socket.assigns.elements))
 
     {:noreply, assign(socket, :value, value)}
+  end
+
+  def handle_info({:receive_data, data}, socket) do
+    IO.inspect "Received data"
+
+    socket =
+      assign(
+        socket,
+        countries: data.countries,
+        leagues: data.leagues,
+      )
+
+    {:noreply, socket}
   end
 end
