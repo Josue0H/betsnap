@@ -36,9 +36,7 @@ defmodule Betsnap.Bets do
           where: b.user_id == ^Integer.to_string(user_id),
           order_by: [desc: b.inserted_at]
       )
-
-    additional_info =
-      Enum.map(bets, fn bet ->
+      |> Enum.map(fn bet ->
         with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
           match = match |> Enum.at(0)
 
@@ -51,6 +49,22 @@ defmodule Betsnap.Bets do
             |> Map.put(:status, match["fixture"]["status"]["short"])
             |> Map.put(:timestamp, match["fixture"]["timestamp"])
             |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
+
+          Map.put(bet, :info, info)
+        else
+          {:error, _} -> %{}
+        end
+      end)
+
+    {:ok, bets}
+  end
+
+  def validate_all_bets() do
+    bets =
+      Betsnap.Repo.all(Betsnap.Bet)
+      |> Enum.map(fn bet ->
+        with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
+          match = match |> Enum.at(0)
 
           if match["fixture"]["status"]["short"] == "FT" do
             if bet.status == "pending" do
@@ -71,7 +85,7 @@ defmodule Betsnap.Bets do
 
                   bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
 
-                  Map.put(bet, :info, info)
+                  bet
 
                 {:ok, "loss"} ->
                   bet_changeset =
@@ -82,23 +96,19 @@ defmodule Betsnap.Bets do
 
                   bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
 
-                  Map.put(bet, :info, info)
+                  bet
 
                 {:error, _} ->
-                  Map.put(bet, :info, info)
+                  bet
               end
-            else
-              Map.put(bet, :info, info)
             end
-          else
-            Map.put(bet, :info, info)
           end
         else
           {:error, _} -> %{}
         end
       end)
 
-    {:ok, additional_info}
+    {:ok, bets}
   end
 
   def delete_bet(id) do

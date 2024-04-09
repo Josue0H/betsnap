@@ -33,6 +33,17 @@ config :betsnap, BetsnapWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :betsnap, Betsnap.Mailer, adapter: Swoosh.Adapters.Local
 
+config :betsnap, Oban,
+  repo: Betsnap.Repo,
+  queues: [default: 2, bets_validation: 2],
+  plugins: [
+    {Oban.Plugins.Cron,
+      crontab: [
+        {"*/15 * * * *", Betsnap.Workers.ProcessorWorker, args: %{name: "ProcessorWorker"}}
+      ]
+    }
+  ]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

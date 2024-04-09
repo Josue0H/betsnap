@@ -14,6 +14,7 @@ defmodule Betsnap.Application do
       {Phoenix.PubSub, name: Betsnap.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Betsnap.Finch},
+      {Oban, Application.get_env(:betsnap, Oban)},
       # Start a worker by calling: Betsnap.Worker.start_link(arg)
       # {Betsnap.Worker, arg},
       # Start to serve requests, typically the last entry

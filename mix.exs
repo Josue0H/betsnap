@@ -19,7 +19,7 @@ defmodule Betsnap.MixProject do
   def application do
     [
       mod: {Betsnap.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :observer, :wx, :runtime_tools]
     ]
   end
 
@@ -63,7 +63,8 @@ defmodule Betsnap.MixProject do
       {:poison, "~> 5.0"},
       {:timex, "~> 3.7"},
       {:number, "~> 1.0.1"},
-      {:dotenv, "~> 3.1"}
+      {:dotenv, "~> 3.1"},
+      {:oban, "~> 2.17"}
     ]
   end
 
