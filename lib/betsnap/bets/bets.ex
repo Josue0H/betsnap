@@ -64,8 +64,6 @@ defmodule Betsnap.Bets do
             |> Map.put(:timestamp, match["fixture"]["timestamp"])
             |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
 
-          IO.inspect info
-
           Map.put(bet, :info, info)
         end)
 
