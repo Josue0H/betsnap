@@ -12,6 +12,7 @@ defmodule Betsnap.HomeServer do
   @bundesliga_id 78
   @la_liga_id 140
   @serie_a_id 135
+  @champions_league 2
 
   defmodule State do
     defstruct countries: [], leagues: []
@@ -79,7 +80,7 @@ defmodule Betsnap.HomeServer do
     today = Date.utc_today()
     next_week = Date.add(today, 7)
 
-    best_leagues = [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id]
+    best_leagues = [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id, @champions_league]
 
     leagues =
       Enum.map(best_leagues, fn league_id ->

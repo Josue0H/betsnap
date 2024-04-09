@@ -36,9 +36,23 @@ defmodule Betsnap.Bets do
           where: b.user_id == ^Integer.to_string(user_id),
           order_by: [desc: b.inserted_at]
       )
-      |> Enum.map(fn bet ->
-        with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
-          match = match |> Enum.at(0)
+
+      tasks = Enum.map(bets, fn bet ->
+        Task.async(fn -> SportsAPI.get_match(bet.fixture_id) end)
+      end)
+
+      results =
+        tasks
+        |> Enum.map(&Task.await/1)
+        |> Enum.map(fn
+          {:ok, %{"response" => match}} -> match
+          {:error, _} -> %{}
+        end)
+        |> Enum.map(fn match -> match |> Enum.at(0) end)
+
+      bets =
+        Enum.map(bets, fn bet ->
+          match = Enum.at(Enum.filter(results, fn r -> r["fixture"]["id"] == bet.fixture_id |> String.to_integer() end), 0)
 
           info =
             %{}
@@ -50,13 +64,34 @@ defmodule Betsnap.Bets do
             |> Map.put(:timestamp, match["fixture"]["timestamp"])
             |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
 
-          Map.put(bet, :info, info)
-        else
-          {:error, _} -> %{}
-        end
-      end)
+          IO.inspect info
 
-    {:ok, bets}
+          Map.put(bet, :info, info)
+        end)
+
+      {:ok, bets}
+
+      # Enum.map(fn bet ->
+      #   with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
+      #     match = match |> Enum.at(0)
+
+      #     info =
+      #       %{}
+      #       |> Map.put(
+      #         :name,
+      #         "#{match["teams"]["home"]["name"]} vs #{match["teams"]["away"]["name"]}"
+      #       )
+      #       |> Map.put(:status, match["fixture"]["status"]["short"])
+      #       |> Map.put(:timestamp, match["fixture"]["timestamp"])
+      #       |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
+
+      #     Map.put(bet, :info, info)
+      #   else
+      #     {:error, _} -> %{}
+      #   end
+      # end)
+
+    # {:ok, bets}
   end
 
   def validate_all_bets() do
