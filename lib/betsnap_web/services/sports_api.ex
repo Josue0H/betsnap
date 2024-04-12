@@ -1,14 +1,14 @@
 defmodule BetsnapWeb.Services.SportsAPI do
   @callback get_countries :: {:ok, list(map())} | {:error, term()}
   @callback get_country(String.t()) :: {:ok, map()} | {:error, term()}
-  @callback get_leagues_matches(String.t(), Date.t(), Date.t()) :: {:ok, list(map())} | {:error, term()}
+  @callback get_leagues_matches(String.t(), Date.t(), Date.t()) ::
+              {:ok, list(map())} | {:error, term()}
   @callback get_country_leagues(String.t()) :: {:ok, list(map())} | {:error, term()}
   @callback get_match(String.t()) :: {:ok, map()} | {:error, term()}
   @callback get_odds(String.t()) :: {:ok, list(map())} | {:error, term()}
   @callback get_standings(String.t(), String.t()) :: {:ok, list(map())} | {:error, term()}
   @callback get_players(String.t()) :: {:ok, list(map())} | {:error, term()}
   @callback get_past_fixtures(String.t(), integer()) :: {:ok, list(map())} | {:error, term()}
-
 
   def get_countries do
     impl().get_countries()

@@ -13,13 +13,13 @@ defmodule BetsnapWeb.Live.MatchLiveTest do
       conn
       |> live(~p"/match?id=1150338")
 
-      :timer.sleep(3000)
-      html = render(live)
+    :timer.sleep(3000)
+    html = render(live)
 
-      assert html =~ "Guadalajara Chivas"
-      assert html =~ "Pachuca"
-      assert html =~ "Estadio Hidalgo, Pachuca de Soto"
-      assert html =~ "Liga MX - Clausura - 15"
+    assert html =~ "Guadalajara Chivas"
+    assert html =~ "Pachuca"
+    assert html =~ "Estadio Hidalgo, Pachuca de Soto"
+    assert html =~ "Liga MX - Clausura - 15"
   end
 
   test "Load match tabs", %{conn: conn} do
@@ -27,15 +27,12 @@ defmodule BetsnapWeb.Live.MatchLiveTest do
       conn
       |> live(~p"/match?id=1150338")
 
-      :timer.sleep(3000)
-      html = render(live)
+    :timer.sleep(3000)
+    html = render(live)
 
-      assert html =~ "Standings"
-      assert html =~ "Players"
-      assert html =~ "Matches"
-      assert html =~ "Bets"
+    assert html =~ "Standings"
+    assert html =~ "Players"
+    assert html =~ "Matches"
+    assert html =~ "Bets"
   end
-
-
-
 end

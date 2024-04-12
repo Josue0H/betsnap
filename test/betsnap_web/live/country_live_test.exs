@@ -13,10 +13,10 @@ defmodule BetsnapWeb.Live.CountryLiveTest do
       conn
       |> live(~p"/country?code=AL")
 
-      :timer.sleep(3000)
-      html = render(live)
+    :timer.sleep(3000)
+    html = render(live)
 
-      assert html =~ "Albania"
+    assert html =~ "Albania"
   end
 
   test "Load country leagues", %{conn: conn} do
@@ -24,14 +24,11 @@ defmodule BetsnapWeb.Live.CountryLiveTest do
       conn
       |> live(~p"/country?code=AL")
 
-      :timer.sleep(6000)
-      html = render(live)
+    :timer.sleep(6000)
+    html = render(live)
 
-      assert html =~ "Liga MX"
-      assert html =~ "Estadio Corregidora"
-      assert html =~ "Estadio Victoria"
+    assert html =~ "Liga MX"
+    assert html =~ "Estadio Corregidora"
+    assert html =~ "Estadio Victoria"
   end
-
-
-
 end

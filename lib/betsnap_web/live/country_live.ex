@@ -8,7 +8,6 @@ defmodule BetsnapWeb.CountryLive do
   end
 
   def handle_params(%{"code" => code}, _uri, socket) do
-
     case SportsAPI.get_country(code) do
       {:ok, %{"response" => country}} ->
         send(self(), {:country_loaded, Enum.at(country, 0)})
@@ -39,6 +38,7 @@ defmodule BetsnapWeb.CountryLive do
 
         send(self(), {:leagues_loaded, results})
         {:noreply, socket}
+
       {:error, _} ->
         {:noreply, assign(socket, loading_leagues: false)}
     end

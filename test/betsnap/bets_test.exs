@@ -35,7 +35,7 @@ defmodule Betsnap.BetsTest do
         "odd" => 1.5,
         "stake" => Decimal.from_float(100.0),
         "earn" => 150.0,
-        "user_id" => id * 2 |> Integer.to_string()
+        "user_id" => (id * 2) |> Integer.to_string()
       }
 
       assert {:error, _} = Bets.create_bet(bet)
@@ -58,7 +58,6 @@ defmodule Betsnap.BetsTest do
       assert {:error, "Insufficient balance"} = Bets.create_bet(bet)
     end
   end
-
 
   describe "get_bets/1" do
     test "get bets" do
@@ -97,5 +96,4 @@ defmodule Betsnap.BetsTest do
       assert {:error, "Bet not found"} = Bets.delete_bet(0)
     end
   end
-
 end

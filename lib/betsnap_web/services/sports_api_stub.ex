@@ -33,7 +33,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
           "code" => "AD",
           "flag" => "https://media.api-sports.io/flags/ad.svg",
           "name" => "Andorra"
-        },
+        }
       ]
     }
 
@@ -42,19 +42,19 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
 
   def get_country(_code) do
     country = %{
-        "errors" => [],
-        "get" => "countries",
-        "paging" => %{"current" => 1, "total" => 1},
-        "parameters" => %{"code" => "AL"},
-        "response" => [
-          %{
-            "code" => "AL",
-            "flag" => "https://media.api-sports.io/flags/al.svg",
-            "name" => "Albania"
-          }
-        ],
-        "results" => 1
-      }
+      "errors" => [],
+      "get" => "countries",
+      "paging" => %{"current" => 1, "total" => 1},
+      "parameters" => %{"code" => "AL"},
+      "response" => [
+        %{
+          "code" => "AL",
+          "flag" => "https://media.api-sports.io/flags/al.svg",
+          "name" => "Albania"
+        }
+      ],
+      "results" => 1
+    }
 
     {:ok, country}
   end
@@ -73,13 +73,13 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
       "response" => [
         %{
           "fixture" => %{
-            "unique" => Enum.random(1..1000000),
+            "unique" => Enum.random(1..1_000_000),
             "date" => "2024-04-13T01:06:00+00:00",
-            "id" => 1150337,
+            "id" => 1_150_337,
             "periods" => %{"first" => nil, "second" => nil},
             "referee" => nil,
             "status" => %{"elapsed" => nil, "long" => "Not Started", "short" => "NS"},
-            "timestamp" => 1712970360,
+            "timestamp" => 1_712_970_360,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Santiago de Quer├⌐taro",
@@ -121,11 +121,11 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-04-13T03:00:00+00:00",
-            "id" => 1150338,
+            "id" => 1_150_338,
             "periods" => %{"first" => nil, "second" => nil},
             "referee" => nil,
             "status" => %{"elapsed" => nil, "long" => "Not Started", "short" => "NS"},
-            "timestamp" => 1712977200,
+            "timestamp" => 1_712_977_200,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Aguascalientes",
@@ -166,7 +166,6 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         }
       ]
     }
-
 
     {:ok, leagues_matches}
   end
@@ -214,9 +213,6 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
       ]
     }
 
-
-
-
     {:ok, country_leagues}
   end
 
@@ -227,11 +223,11 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
           "events" => [],
           "fixture" => %{
             "date" => "2024-04-13T23:00:00+00:00",
-            "id" => 1150340,
+            "id" => 1_150_340,
             "periods" => %{"first" => nil, "second" => nil},
             "referee" => nil,
             "status" => %{"elapsed" => nil, "long" => "Not Started", "short" => "NS"},
-            "timestamp" => 1713049200,
+            "timestamp" => 1_713_049_200,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Pachuca de Soto",
@@ -275,6 +271,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         }
       ]
     }
+
     {:ok, match}
   end
 
@@ -318,12 +315,12 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
               ],
               "id" => 27,
               "name" => "NordicBet"
-            },
+            }
           ],
           "fixture" => %{
             "date" => "2024-04-13T23:00:00+00:00",
-            "id" => 1150340,
-            "timestamp" => 1713049200,
+            "id" => 1_150_340,
+            "timestamp" => 1_713_049_200,
             "timezone" => "UTC"
           },
           "league" => %{
@@ -467,7 +464,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
                     "name" => "Monterrey"
                   },
                   "update" => "2024-04-10T00:00:00+00:00"
-                },
+                }
               ]
             ]
           }
@@ -670,7 +667,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
               }
             }
           ]
-        },
+        }
       ],
       "results" => 2
     }
@@ -688,15 +685,15 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-04-11T00:15:00+00:00",
-            "id" => 1184611,
-            "periods" => %{"first" => 1712794500, "second" => 1712798100},
+            "id" => 1_184_611,
+            "periods" => %{"first" => 1_712_794_500, "second" => 1_712_798_100},
             "referee" => "Oshane Nation, Jamaica",
             "status" => %{
               "elapsed" => 90,
               "long" => "Match Finished",
               "short" => "FT"
             },
-            "timestamp" => 1712794500,
+            "timestamp" => 1_712_794_500,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Pachuca de Soto",
@@ -738,15 +735,15 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-04-07T01:00:00+00:00",
-            "id" => 1150332,
-            "periods" => %{"first" => 1712451600, "second" => 1712455200},
+            "id" => 1_150_332,
+            "periods" => %{"first" => 1_712_451_600, "second" => 1_712_455_200},
             "referee" => "F. Hern├índez",
             "status" => %{
               "elapsed" => 90,
               "long" => "Match Finished",
               "short" => "FT"
             },
-            "timestamp" => 1712451600,
+            "timestamp" => 1_712_451_600,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "San Nicol├ís de los Garza",
@@ -788,15 +785,15 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-04-04T02:00:00+00:00",
-            "id" => 1184612,
-            "periods" => %{"first" => 1712196000, "second" => 1712199600},
+            "id" => 1_184_612,
+            "periods" => %{"first" => 1_712_196_000, "second" => 1_712_199_600},
             "referee" => "Villarrea Armando, USA",
             "status" => %{
               "elapsed" => 90,
               "long" => "Match Finished",
               "short" => "FT"
             },
-            "timestamp" => 1712196000,
+            "timestamp" => 1_712_196_000,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "San Jos├⌐",
@@ -838,15 +835,15 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-03-31T01:00:00+00:00",
-            "id" => 1150322,
-            "periods" => %{"first" => 1711846800, "second" => 1711850400},
+            "id" => 1_150_322,
+            "periods" => %{"first" => 1_711_846_800, "second" => 1_711_850_400},
             "referee" => "D. Quintero",
             "status" => %{
               "elapsed" => 90,
               "long" => "Match Finished",
               "short" => "FT"
             },
-            "timestamp" => 1711846800,
+            "timestamp" => 1_711_846_800,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Pachuca de Soto",
@@ -888,15 +885,15 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
         %{
           "fixture" => %{
             "date" => "2024-03-18T01:00:00+00:00",
-            "id" => 1150318,
-            "periods" => %{"first" => 1710723600, "second" => 1710727200},
+            "id" => 1_150_318,
+            "periods" => %{"first" => 1_710_723_600, "second" => 1_710_727_200},
             "referee" => "V. C├íceres",
             "status" => %{
               "elapsed" => 90,
               "long" => "Match Finished",
               "short" => "FT"
             },
-            "timestamp" => 1710723600,
+            "timestamp" => 1_710_723_600,
             "timezone" => "UTC",
             "venue" => %{
               "city" => "San Luis Potos├¡",

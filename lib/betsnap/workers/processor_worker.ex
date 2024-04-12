@@ -8,5 +8,4 @@ defmodule Betsnap.Workers.ProcessorWorker do
     Bets.validate_all_bets()
     IO.puts("Job finished!")
   end
-
 end

@@ -41,7 +41,6 @@ defmodule BetsnapWeb.HomeLive do
       )
 
     {:ok, socket}
-
   end
 
   # def handle_info({:countries_loaded, countries}, socket) do
@@ -59,7 +58,7 @@ defmodule BetsnapWeb.HomeLive do
   end
 
   def handle_info({:receive_data, data}, socket) do
-    IO.inspect "Received data"
+    IO.inspect("Received data")
 
     socket =
       assign(

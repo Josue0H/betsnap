@@ -19,7 +19,6 @@ defmodule Betsnap.HomeServer do
     defstruct countries: [], leagues: []
   end
 
-
   # PubSub
 
   def subscribe do
@@ -37,11 +36,9 @@ defmodule Betsnap.HomeServer do
     GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
 
-
   def get_home_data do
-    GenServer.call @name, :get_data
+    GenServer.call(@name, :get_data)
   end
-
 
   def init(_state) do
     {:ok, new_state} = get_data()
@@ -69,19 +66,27 @@ defmodule Betsnap.HomeServer do
   end
 
   defp get_data do
-    countries = case SportsAPI.get_countries() do
-      {:ok, response} ->
-        %{"response" => countries} = response
-        countries
+    countries =
+      case SportsAPI.get_countries() do
+        {:ok, response} ->
+          %{"response" => countries} = response
+          countries
 
-      {:error, _} ->
-        []
-    end
+        {:error, _} ->
+          []
+      end
 
     today = Date.utc_today()
     next_week = Date.add(today, 7)
 
-    best_leagues = [@liga_mx_id, @premier_league_id, @bundesliga_id, @la_liga_id, @serie_a_id, @champions_league]
+    best_leagues = [
+      @liga_mx_id,
+      @premier_league_id,
+      @bundesliga_id,
+      @la_liga_id,
+      @serie_a_id,
+      @champions_league
+    ]
 
     leagues =
       Enum.map(best_leagues, fn league_id ->
@@ -98,7 +103,6 @@ defmodule Betsnap.HomeServer do
     # IO.inspect(countries, label: "Countries")
     # IO.inspect(leagues, label: "Leagues")
 
-    {:ok, %State{ countries: countries, leagues: leagues }}
+    {:ok, %State{countries: countries, leagues: leagues}}
   end
-
 end

@@ -38,10 +38,9 @@ config :betsnap, Oban,
   queues: [default: 2, bets_validation: 2],
   plugins: [
     {Oban.Plugins.Cron,
-      crontab: [
-        {"*/15 * * * *", Betsnap.Workers.ProcessorWorker, args: %{name: "ProcessorWorker"}}
-      ]
-    }
+     crontab: [
+       {"*/15 * * * *", Betsnap.Workers.ProcessorWorker, args: %{name: "ProcessorWorker"}}
+     ]}
   ]
 
 # Configure esbuild (the version is required)

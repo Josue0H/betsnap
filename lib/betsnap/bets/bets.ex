@@ -9,9 +9,10 @@ defmodule Betsnap.Bets do
   alias BetsnapWeb.Utils.BetChecker
 
   def create_bet(attrs) do
-
     case Repo.get(User, attrs["user_id"]) do
-      nil -> {:error, "User not found"}
+      nil ->
+        {:error, "User not found"}
+
       user ->
         if Decimal.compare(user.balance, attrs["stake"]) == :lt do
           {:error, "Insufficient balance"}
@@ -26,7 +27,6 @@ defmodule Betsnap.Bets do
           end)
         end
     end
-
   end
 
   def get_bets(user_id) do
@@ -37,57 +37,64 @@ defmodule Betsnap.Bets do
           order_by: [desc: b.inserted_at]
       )
 
-      tasks = Enum.map(bets, fn bet ->
+    tasks =
+      Enum.map(bets, fn bet ->
         Task.async(fn -> SportsAPI.get_match(bet.fixture_id) end)
       end)
 
-      results =
-        tasks
-        |> Enum.map(&Task.await/1)
-        |> Enum.map(fn
-          {:ok, %{"response" => match}} -> match
-          {:error, _} -> %{}
-        end)
-        |> Enum.map(fn match -> match |> Enum.at(0) end)
+    results =
+      tasks
+      |> Enum.map(&Task.await/1)
+      |> Enum.map(fn
+        {:ok, %{"response" => match}} -> match
+        {:error, _} -> %{}
+      end)
+      |> Enum.map(fn match -> match |> Enum.at(0) end)
 
-      bets =
-        Enum.map(bets, fn bet ->
-          match = Enum.at(Enum.filter(results, fn r -> r["fixture"]["id"] == bet.fixture_id |> String.to_integer() end), 0)
+    bets =
+      Enum.map(bets, fn bet ->
+        match =
+          Enum.at(
+            Enum.filter(results, fn r ->
+              r["fixture"]["id"] == bet.fixture_id |> String.to_integer()
+            end),
+            0
+          )
 
-          info =
-            %{}
-            |> Map.put(
-              :name,
-              "#{match["teams"]["home"]["name"]} vs #{match["teams"]["away"]["name"]}"
-            )
-            |> Map.put(:status, match["fixture"]["status"]["short"])
-            |> Map.put(:timestamp, match["fixture"]["timestamp"])
-            |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
+        info =
+          %{}
+          |> Map.put(
+            :name,
+            "#{match["teams"]["home"]["name"]} vs #{match["teams"]["away"]["name"]}"
+          )
+          |> Map.put(:status, match["fixture"]["status"]["short"])
+          |> Map.put(:timestamp, match["fixture"]["timestamp"])
+          |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
 
-          Map.put(bet, :info, info)
-        end)
+        Map.put(bet, :info, info)
+      end)
 
-      {:ok, bets}
+    {:ok, bets}
 
-      # Enum.map(fn bet ->
-      #   with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
-      #     match = match |> Enum.at(0)
+    # Enum.map(fn bet ->
+    #   with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
+    #     match = match |> Enum.at(0)
 
-      #     info =
-      #       %{}
-      #       |> Map.put(
-      #         :name,
-      #         "#{match["teams"]["home"]["name"]} vs #{match["teams"]["away"]["name"]}"
-      #       )
-      #       |> Map.put(:status, match["fixture"]["status"]["short"])
-      #       |> Map.put(:timestamp, match["fixture"]["timestamp"])
-      #       |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
+    #     info =
+    #       %{}
+    #       |> Map.put(
+    #         :name,
+    #         "#{match["teams"]["home"]["name"]} vs #{match["teams"]["away"]["name"]}"
+    #       )
+    #       |> Map.put(:status, match["fixture"]["status"]["short"])
+    #       |> Map.put(:timestamp, match["fixture"]["timestamp"])
+    #       |> Map.put(:result, "#{match["goals"]["home"]} - #{match["goals"]["away"]}")
 
-      #     Map.put(bet, :info, info)
-      #   else
-      #     {:error, _} -> %{}
-      #   end
-      # end)
+    #     Map.put(bet, :info, info)
+    #   else
+    #     {:error, _} -> %{}
+    #   end
+    # end)
 
     # {:ok, bets}
   end
@@ -145,12 +152,15 @@ defmodule Betsnap.Bets do
   end
 
   def delete_bet(id) do
-
     case Betsnap.Repo.get(Betsnap.Bet, id) do
-      nil -> {:error, "Bet not found"}
+      nil ->
+        {:error, "Bet not found"}
+
       bet ->
         case Repo.get(User, bet.user_id) do
-          nil -> {:error, "User not found"}
+          nil ->
+            {:error, "User not found"}
+
           user ->
             Repo.transaction(fn ->
               user
@@ -158,7 +168,6 @@ defmodule Betsnap.Bets do
 
               Betsnap.Repo.delete(bet)
             end)
-
         end
     end
   end

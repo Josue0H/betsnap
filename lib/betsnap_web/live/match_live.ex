@@ -29,7 +29,6 @@ defmodule BetsnapWeb.MatchLive do
   def handle_params(%{"id" => id, "odd" => odd, "value" => value, "bet" => bet}, _uri, socket) do
     load_match(id, socket)
 
-
     socket =
       assign(
         socket,

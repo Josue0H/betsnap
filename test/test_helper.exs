@@ -1,4 +1,3 @@
-
 Mox.defmock(BetsnapWeb.Services.SportsAPI.Mock, for: BetsnapWeb.Services.SportsAPI)
 
 Application.put_env(

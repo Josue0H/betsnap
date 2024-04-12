@@ -4,7 +4,6 @@ defmodule BetsnapWeb.Live.MyBetsTest do
   import Phoenix.LiveViewTest
   import Betsnap.AccountsFixtures
 
-
   test "Redirect if user is not logged in", %{conn: conn} do
     assert {:error, redirect} = live(conn, ~p"/my-bets")
 
@@ -20,9 +19,5 @@ defmodule BetsnapWeb.Live.MyBetsTest do
       |> live(~p"/my-bets")
 
     assert html =~ "My Bets"
-
   end
-
-
-
 end

@@ -70,7 +70,7 @@ defmodule BetsnapWeb.Services.SportsAPI.HTTP do
   end
 
   defp handle_response({:ok, %{body: body, status_code: 200}}) do
-    IO.inspect Poison.decode!(body)
+    IO.inspect(Poison.decode!(body))
     {:ok, Poison.decode!(body)}
   end
 
@@ -78,6 +78,7 @@ defmodule BetsnapWeb.Services.SportsAPI.HTTP do
     message =
       Poison.Parser.parse!(body)
       |> get_in(["message"])
+
     {:error, message}
   end
 

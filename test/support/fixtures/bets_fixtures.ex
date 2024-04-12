@@ -1,5 +1,4 @@
 defmodule Betsnap.BetsFixtures do
-
   def valid_bet_attributes(attrs \\ %{}) do
     %{id: id} = Betsnap.AccountsFixtures.user_fixture()
 
@@ -14,7 +13,8 @@ defmodule Betsnap.BetsFixtures do
         "stake" => Decimal.from_float(100.0),
         "earn" => 150.0,
         "user_id" => id |> Integer.to_string()
-      })
+      }
+    )
   end
 
   def bet_fixture(attrs \\ %{}) do
@@ -22,6 +22,7 @@ defmodule Betsnap.BetsFixtures do
       attrs
       |> valid_bet_attributes()
       |> Betsnap.Bets.create_bet()
+
     bet
   end
 end

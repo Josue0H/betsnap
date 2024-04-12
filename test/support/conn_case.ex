@@ -36,13 +36,10 @@ defmodule BetsnapWeb.ConnCase do
       BetsnapWeb.Services.SportsAPI.Mock,
       BetsnapWeb.Services.SportsAPI.Stub
     )
+
     Betsnap.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
-
   end
-
-
-
 
   @doc """
   Setup helper that registers and logs in users.

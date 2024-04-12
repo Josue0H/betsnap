@@ -28,36 +28,36 @@ defmodule BetsnapWeb.MyBetsLive do
       <div>
         <div class="flex">
           <h6 class="text-white text-3xl"><%= assigns.bet.value %></h6>
-
+          
           <h6 class="mx-2 text-white font-bold text-3xl"><%= assigns.bet.odd %></h6>
         </div>
-
+        
         <p class="text-white text-xs my-1"><%= betname(assigns.bet.bet) %></p>
-
+        
         <p class="text-white text-xs my-1"><%= assigns.bet.info.name %></p>
-
+        
         <p class="text-white text-xs my-1"><%= get_date(assigns.bet.info.timestamp) %></p>
       </div>
-
+      
       <div>
         <h6 class="text-white text-xs">Bet: <%= number_to_currency(assigns.bet.stake) %></h6>
-
+        
         <h6 class="text-white text-xs">Earnings: <%= number_to_currency(assigns.bet.earn) %></h6>
-
+        
         <p class="text-white text-xs font-bold"><%= assigns.bet.info.result %></p>
-
+        
         <%= if assigns.bet.status == "win" do %>
           <div class="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-md">
             <p>Win</p>
           </div>
         <% end %>
-
+        
         <%= if assigns.bet.status == "loss" do %>
           <div class="absolute bottom-0 right-0 bg-red-500 text-white p-1 rounded-md">
             <p>Loss</p>
           </div>
         <% end %>
-
+        
         <%= if assigns.bet.status == "pending" || is_live?(assigns.bet.info.timestamp) do %>
           <.button
             class="bg-dark text-white p-1 rounded-md mt-3"

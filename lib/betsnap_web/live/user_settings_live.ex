@@ -18,17 +18,20 @@ defmodule BetsnapWeb.UserSettingsLive do
           phx-submit="update_username"
           phx-change="validate_username"
         >
+          <.input field={@username_form[:email]} type="hidden" id="hidden_user_email" />
           <.input
-            field={@username_form[:email]}
-            type="hidden"
-            id="hidden_user_email"
+            field={@username_form[:username]}
+            type="text"
+            label="Username"
+            required
+            name="current_username"
           />
-          <.input field={@username_form[:username]} type="text" label="Username" required name="current_username"/>
           <:actions>
             <.button phx-disable-with="Saving...">Save Changes</.button>
           </:actions>
         </.simple_form>
       </div>
+      
       <div>
         <.simple_form
           for={@email_form}
@@ -51,6 +54,7 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+      
       <div>
         <.simple_form
           for={@password_form}
@@ -87,13 +91,16 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+      
       <div class="w-full flex justify-around my-5">
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="100">
           + $100
         </.button>
+        
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="200">
           + $200
         </.button>
+        
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="500">
           + $500
         </.button>
@@ -159,22 +166,28 @@ defmodule BetsnapWeb.UserSettingsLive do
     {:noreply, assign(socket, username_form: username_form, current_username: username)}
   end
 
-
   def handle_event("update_username", params, socket) do
     %{"current_username" => username, "user" => user_params} = params
     user = socket.assigns.current_user
 
-    case Accounts.update_user_username(user, %{ username: username }) do
+    case Accounts.update_user_username(user, %{username: username}) do
       {:ok, user} ->
         username_form =
           user
           |> Accounts.change_username(user_params)
           |> to_form()
 
-        {:noreply, socket |> assign(username_form: username_form) |> put_flash(:info, "Username updated successfully." ) |> redirect(to: "/users/settings")}
+        {:noreply,
+         socket
+         |> assign(username_form: username_form)
+         |> put_flash(:info, "Username updated successfully.")
+         |> redirect(to: "/users/settings")}
 
       {:error, changeset} ->
-        {:noreply, socket |> assign(username_form: to_form(changeset)) |> put_flash(:error, "Username could not be updated.")}
+        {:noreply,
+         socket
+         |> assign(username_form: to_form(changeset))
+         |> put_flash(:error, "Username could not be updated.")}
     end
   end
 
