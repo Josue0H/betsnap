@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.MatchTabs do
+  @moduledoc """
+  Module to handle match tabs
+  """
+
   use BetsnapWeb, :live_component
 
   alias BetsnapWeb.Services.SportsAPI
@@ -113,7 +117,7 @@ defmodule BetsnapWeb.MatchTabs do
             Bets
           </.link>
         <% end %>
-        
+
         <.link
           patch={"/match?id=#{@match["fixture"]["id"]}&tab=standings"}
           class={
@@ -125,7 +129,7 @@ defmodule BetsnapWeb.MatchTabs do
         >
           Standings
         </.link>
-        
+
         <.link
           patch={"/match?id=#{@match["fixture"]["id"]}&tab=players"}
           class={
@@ -137,7 +141,7 @@ defmodule BetsnapWeb.MatchTabs do
         >
           Players
         </.link>
-        
+
         <.link
           patch={"/match?id=#{@match["fixture"]["id"]}&tab=matches"}
           class={
@@ -150,20 +154,20 @@ defmodule BetsnapWeb.MatchTabs do
           Matches
         </.link>
       </div>
-      
+
       <div class="pb-5">
         <%= if @active_tab === :bets do %>
           <.bets odds={@odds} match={@match} />
         <% end %>
-        
+
         <%= if @active_tab === :standings do %>
           <.standings standings={@standings} match={@match} />
         <% end %>
-        
+
         <%= if @active_tab === :players do %>
           <.players players={@players} />
         <% end %>
-        
+
         <%= if @active_tab === :matches do %>
           <.matches matches={@matches} />
         <% end %>
@@ -187,7 +191,7 @@ defmodule BetsnapWeb.MatchTabs do
     <div>
       <hr class="text-white w-full my-2" />
       <h1 class="text-white text-bold"><%= assigns.odd["name"] %></h1>
-      
+
       <div class="grid grid-cols-6 mt-2">
         <%= for bet <- assigns.odd["values"] do %>
           <.link
@@ -210,17 +214,17 @@ defmodule BetsnapWeb.MatchTabs do
         <thead class="text-white bg-dark">
           <tr>
             <th class="px-4 py-2">#</th>
-            
+
             <th class="px-4 py-2">Team</th>
-            
+
             <th class="px-4 py-2">P</th>
-            
+
             <th class="px-4 py-2">DIFF</th>
-            
+
             <th class="px-4 py-2">PTS</th>
           </tr>
         </thead>
-        
+
         <tbody>
           <%= for standing <- assigns.standings do %>
             <tr class={
@@ -232,16 +236,16 @@ defmodule BetsnapWeb.MatchTabs do
               end
             }>
               <td class="px-4 py-2 text-center"><%= standing["rank"] %></td>
-              
+
               <td class="px-4 py-2 flex items-center">
                 <img src={standing["team"]["logo"]} alt={standing["team"]["name"]} class="w-8 h-8" />
                 <span class="ml-2"><%= standing["team"]["name"] %></span>
               </td>
-              
+
               <td class="px-4 py-2 text-center"><%= standing["all"]["played"] %></td>
-              
+
               <td class="px-4 py-2 text-center"><%= standing["goalsDiff"] %></td>
-              
+
               <td class="px-4 py-2 text-center"><%= standing["points"] %></td>
             </tr>
           <% end %>
@@ -256,7 +260,7 @@ defmodule BetsnapWeb.MatchTabs do
     <div class="w-full mt-5 flex">
       <div class="w-1/2">
         <h1 class="text-white text-3xl">Home Players</h1>
-        
+
         <table class="w-full table-auto bg-brand mt-3">
           <tbody>
             <%= for player <- assigns.players.home do %>
@@ -277,10 +281,10 @@ defmodule BetsnapWeb.MatchTabs do
           </tbody>
         </table>
       </div>
-      
+
       <div class="w-1/2">
         <h1 class="text-white text-3xl">Away Players</h1>
-        
+
         <table class="w-full table-auto bg-white mt-3">
           <tbody>
             <%= for player <- assigns.players.away do %>
@@ -310,7 +314,7 @@ defmodule BetsnapWeb.MatchTabs do
     <div class="w-full mt-5 flex">
       <div class="w-1/2">
         <h1 class="text-white text-3xl">Home</h1>
-        
+
         <table class="w-full table-auto bg-brand mt-3">
           <tbody>
             <%= for match <- assigns.matches.home do %>
@@ -333,7 +337,7 @@ defmodule BetsnapWeb.MatchTabs do
                         <%= match["teams"]["home"]["name"] %>
                       </span>
                     </div>
-                    
+
                     <span class={
                       if match["teams"]["home"]["winner"] do
                         "text-white font-bold"
@@ -344,7 +348,7 @@ defmodule BetsnapWeb.MatchTabs do
                       <%= match["goals"]["home"] %>
                     </span>
                   </div>
-                  
+
                   <div class="w-full flex justify-between">
                     <div class="flex items-center">
                       <img
@@ -362,7 +366,7 @@ defmodule BetsnapWeb.MatchTabs do
                         <%= match["teams"]["away"]["name"] %>
                       </span>
                     </div>
-                    
+
                     <span class={
                       if match["teams"]["away"]["winner"] do
                         "text-white font-bold"
@@ -379,10 +383,10 @@ defmodule BetsnapWeb.MatchTabs do
           </tbody>
         </table>
       </div>
-      
+
       <div class="w-1/2">
         <h1 class="text-white text-3xl">Away</h1>
-        
+
         <table class="w-full table-auto bg-white mt-3">
           <tbody>
             <%= for match <- assigns.matches.away do %>
@@ -405,7 +409,7 @@ defmodule BetsnapWeb.MatchTabs do
                         <%= match["teams"]["home"]["name"] %>
                       </span>
                     </div>
-                    
+
                     <span class={
                       if match["teams"]["home"]["winner"] do
                         "text-brand font-bold"
@@ -416,7 +420,7 @@ defmodule BetsnapWeb.MatchTabs do
                       <%= match["goals"]["home"] %>
                     </span>
                   </div>
-                  
+
                   <div class="w-full flex justify-between">
                     <div class="flex items-center">
                       <img
@@ -434,7 +438,7 @@ defmodule BetsnapWeb.MatchTabs do
                         <%= match["teams"]["away"]["name"] %>
                       </span>
                     </div>
-                    
+
                     <span class={
                       if match["teams"]["away"]["winner"] do
                         "text-brand font-bold"

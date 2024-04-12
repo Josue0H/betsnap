@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.Services.SportsAPI do
+  @moduledoc """
+  Module to handle sports API requests
+  """
+
   @callback get_countries :: {:ok, list(map())} | {:error, term()}
   @callback get_country(String.t()) :: {:ok, map()} | {:error, term()}
   @callback get_leagues_matches(String.t(), Date.t(), Date.t()) ::
@@ -50,7 +54,7 @@ defmodule BetsnapWeb.Services.SportsAPI do
     Application.get_env(
       :betsnap_web,
       BetsnapWeb.Services.SportsAPI,
-      BetsnapWeb.Services.SportsAPI.Stub
+      BetsnapWeb.Services.SportsAPI.HTTP
     )
   end
 end

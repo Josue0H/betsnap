@@ -1,4 +1,8 @@
 defmodule Betsnap.Workers.ProcessorWorker do
+  @moduledoc """
+  Module to handle the processor worker
+  """
+
   use Oban.Worker, queue: :bets_validation
 
   alias Betsnap.Bets

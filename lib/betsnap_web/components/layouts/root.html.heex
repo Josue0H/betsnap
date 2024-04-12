@@ -7,11 +7,11 @@
     <.live_title suffix="">
       <%= assigns[:page_title] || "Betsnap" %>
     </.live_title>
-     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  
+
   <body class="bg-dark">
     <BetsnapWeb.CustomComponents.topbar current_user={@current_user} />
     <div class="pt-[7rem]">

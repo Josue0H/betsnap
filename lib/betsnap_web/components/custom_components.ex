@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.CustomComponents do
+  @moduledoc """
+  Module to handle custom components
+  """
+
   use Phoenix.Component
 
   import Number.Currency
@@ -15,7 +19,7 @@ defmodule BetsnapWeb.CustomComponents do
           />
         </.link>
       </div>
-      
+
       <div class="flex">
         <ul class="w-full flex">
           <%= if @current_user do %>
@@ -24,7 +28,7 @@ defmodule BetsnapWeb.CustomComponents do
                 <%= @current_user.username %> | <%= number_to_currency(@current_user.balance) %>
               </span>
             </li>
-            
+
             <li>
               <.link
                 href="/my-bets"
@@ -33,7 +37,7 @@ defmodule BetsnapWeb.CustomComponents do
                 My Bets
               </.link>
             </li>
-            
+
             <li>
               <.link
                 href="/users/settings"
@@ -42,7 +46,7 @@ defmodule BetsnapWeb.CustomComponents do
                 Settings
               </.link>
             </li>
-            
+
             <li>
               <.link
                 href="/users/log_out"
@@ -61,7 +65,7 @@ defmodule BetsnapWeb.CustomComponents do
                 Register
               </.link>
             </li>
-            
+
             <li>
               <.link
                 href="/users/log_in"
@@ -87,7 +91,7 @@ defmodule BetsnapWeb.CustomComponents do
           <%= if country["name"] != "World" do %>
             <img src={country["flag"]} alt={country["country"]} class="w-5 h-5" />
           <% end %>
-          
+
           <.link
             href={"/country?code=#{country["code"]}"}
             class="text-white ml-1 mb-1 hover:ml-2 cursor-pointer transition-all"

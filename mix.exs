@@ -65,7 +65,8 @@ defmodule Betsnap.MixProject do
       {:number, "~> 1.0.1"},
       {:dotenv, "~> 3.1"},
       {:oban, "~> 2.17"},
-      {:mox, "~> 1.0", only: :test}
+      {:mox, "~> 1.0", only: :test},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
 

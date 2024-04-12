@@ -13,15 +13,16 @@ defmodule BetsnapWeb.MatchLive do
   end
 
   def load_match(id, socket) do
-    with {:ok, %{"response" => match}} <- SportsAPI.get_match(id) do
-      match =
-        match
-        |> Enum.at(0)
+    case SportsAPI.get_match(id) do
+      {:ok, %{"response" => match}} ->
+        match =
+          match
+          |> Enum.at(0)
 
-      send(self(), {:match_loaded, match})
-      match["fixture"]["status"]["short"]
-    else
-      {:error, _} ->
+        send(self(), {:match_loaded, match})
+        match["fixture"]["status"]["short"]
+
+      _ ->
         {:noreply, redirect(socket, to: "/")}
     end
   end

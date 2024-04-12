@@ -1,4 +1,8 @@
 defmodule Betsnap.Bet do
+  @moduledoc """
+  Module to handle bet schema and changeset
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -1,45 +1,71 @@
 defmodule BetsnapWeb.Utils.BetChecker do
+  @moduledoc """
+  Module to check bets
+  """
+
+  @bet_functions %{
+    "1" => :match_winner,
+    "2" => :home_away,
+    "3" => :second_half_winner,
+    "5" => :goals_over_under,
+    "6" => :goals_over_under_first_half,
+    "26" => :goals_over_under_second_half,
+    "27" => :clean_sheet_home,
+    "28" => :clean_sheet_away,
+    "8" => :both_teams_to_score,
+    "29" => :win_to_nil_home,
+    "30" => :win_to_nil_away,
+    "10" => :exact_score
+  }
+
   def check_bet(match, bet, value) do
     IO.puts("Checking bet... #{bet} #{value}")
 
-    case bet do
-      "1" -> match_winner(match, value)
-      "2" -> home_away(match, value)
-      "3" -> second_half_winner(match, value)
-      "5" -> goals_over_under(match, value)
-      "6" -> goals_over_under_first_half(match, value)
-      "26" -> goals_over_under_second_half(match, value)
-      "27" -> clean_sheet_home(match, value)
-      "28" -> clean_sheet_away(match, value)
-      "8" -> both_teams_to_score(match, value)
-      "29" -> win_to_nil_home(match, value)
-      "30" -> win_to_nil_away(match, value)
-      "10" -> exact_score(match, value)
-      _ -> {:error, "Invalid bet"}
+    case Map.fetch(@bet_functions, bet) do
+      {:ok, function} -> apply(__MODULE__, function, [match, value])
+      :error -> {:error, "Invalid bet"}
     end
   end
 
-  def match_winner(match, value) do
-    case match do
-      %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        cond do
-          home_goals > away_goals && value == "Home" ->
-            {:ok, "win"}
+  # def match_winner(match, value) do
+  #   case match do
+  #     %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
+  #       cond do
+  #         home_goals > away_goals && value == "Home" ->
+  #           {:ok, "win"}
 
-          home_goals == away_goals && value == "Draw" ->
-            {:ok, "win"}
+  #         home_goals == away_goals && value == "Draw" ->
+  #           {:ok, "win"}
 
-          home_goals < away_goals && value == "Away" ->
-            {:ok, "win"}
+  #         home_goals < away_goals && value == "Away" ->
+  #           {:ok, "win"}
 
-          true ->
-            {:ok, "loss"}
-        end
+  #         true ->
+  #           {:ok, "loss"}
+  #       end
 
-      _ ->
-        {:error, "Invalid match"}
+  #     _ ->
+  #       {:error, "Invalid match"}
+  #   end
+  # end
+
+  def match_winner(%{"goals" => %{"home" => home_goals, "away" => away_goals}}, value) do
+    cond do
+      home_goals > away_goals && value == "Home" ->
+        {:ok, "win"}
+
+      home_goals == away_goals && value == "Draw" ->
+        {:ok, "win"}
+
+      home_goals < away_goals && value == "Away" ->
+        {:ok, "win"}
+
+      true ->
+        {:ok, "loss"}
     end
   end
+
+  def match_winner(_, _), do: {:error, "Invalid match"}
 
   def home_away(match, value) do
     case match do
@@ -60,27 +86,45 @@ defmodule BetsnapWeb.Utils.BetChecker do
     end
   end
 
-  def second_half_winner(match, value) do
-    case match do
-      %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        cond do
-          home_goals > away_goals && value == "Home" ->
-            {:ok, "win"}
+  # def second_half_winner(match, value) do
+  #   case match do
+  #     %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
+  #       cond do
+  #         home_goals > away_goals && value == "Home" ->
+  #           {:ok, "win"}
 
-          home_goals == away_goals && value == "Draw" ->
-            {:ok, "win"}
+  #         home_goals == away_goals && value == "Draw" ->
+  #           {:ok, "win"}
 
-          home_goals < away_goals && value == "Away" ->
-            {:ok, "win"}
+  #         home_goals < away_goals && value == "Away" ->
+  #           {:ok, "win"}
 
-          true ->
-            {:ok, "loss"}
-        end
+  #         true ->
+  #           {:ok, "loss"}
+  #       end
 
-      _ ->
-        {:error, "Invalid match"}
+  #     _ ->
+  #       {:error, "Invalid match"}
+  #   end
+  # end
+
+  def second_half_winner(%{"goals" => %{"home" => home_goals, "away" => away_goals}}, value) do
+    cond do
+      home_goals > away_goals && value == "Home" ->
+        {:ok, "win"}
+
+      home_goals == away_goals && value == "Draw" ->
+        {:ok, "win"}
+
+      home_goals < away_goals && value == "Away" ->
+        {:ok, "win"}
+
+      true ->
+        {:ok, "loss"}
     end
   end
+
+  def second_half_winner(_, _), do: {:error, "Invalid match"}
 
   def goals_over_under(match, value) do
     case match do
@@ -211,62 +255,107 @@ defmodule BetsnapWeb.Utils.BetChecker do
     end
   end
 
-  def both_teams_to_score(match, value) do
-    case match do
-      %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        cond do
-          home_goals > 0 && away_goals > 0 && value == "Yes" ->
-            {:ok, "win"}
+  # def both_teams_to_score(match, value) do
+  #   case match do
+  #     %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
+  #       cond do
+  #         home_goals > 0 && away_goals > 0 && value == "Yes" ->
+  #           {:ok, "win"}
 
-          (home_goals == 0 || away_goals == 0) && value == "No" ->
-            {:ok, "win"}
+  #         (home_goals == 0 || away_goals == 0) && value == "No" ->
+  #           {:ok, "win"}
 
-          true ->
-            {:ok, "loss"}
-        end
+  #         true ->
+  #           {:ok, "loss"}
+  #       end
 
-      _ ->
-        {:error, "Invalid match"}
+  #     _ ->
+  #       {:error, "Invalid match"}
+  #   end
+  # end
+
+  def both_teams_to_score(%{"goals" => %{"home" => home_goals, "away" => away_goals}}, value) do
+    cond do
+      home_goals > 0 && away_goals > 0 && value == "Yes" ->
+        {:ok, "win"}
+
+      (home_goals == 0 || away_goals == 0) && value == "No" ->
+        {:ok, "win"}
+
+      true ->
+        {:ok, "loss"}
     end
   end
 
-  def win_to_nil_home(match, value) do
-    case match do
-      %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        cond do
-          home_goals > 0 && away_goals == 0 && value == "Yes" ->
-            {:ok, "win"}
+  def both_teams_to_score(_, _), do: {:error, "Invalid match"}
 
-          home_goals > 0 && away_goals > 0 && value == "No" ->
-            {:ok, "win"}
+  # def win_to_nil_home(match, value) do
+  #   case match do
+  #     %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
+  #       cond do
+  #         home_goals > 0 && away_goals == 0 && value == "Yes" ->
+  #           {:ok, "win"}
 
-          true ->
-            {:ok, "loss"}
-        end
+  #         home_goals > 0 && away_goals > 0 && value == "No" ->
+  #           {:ok, "win"}
 
-      _ ->
-        {:error, "Invalid match"}
+  #         true ->
+  #           {:ok, "loss"}
+  #       end
+
+  #     _ ->
+  #       {:error, "Invalid match"}
+  #   end
+  # end
+
+  def win_to_nil_home(%{"goals" => %{"home" => home_goals, "away" => away_goals}}, value) do
+    cond do
+      home_goals > 0 && away_goals == 0 && value == "Yes" ->
+        {:ok, "win"}
+
+      home_goals > 0 && away_goals > 0 && value == "No" ->
+        {:ok, "win"}
+
+      true ->
+        {:ok, "loss"}
     end
   end
 
-  def win_to_nil_away(match, value) do
-    case match do
-      %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
-        cond do
-          away_goals > 0 && home_goals == 0 && value == "Yes" ->
-            {:ok, "win"}
+  def win_to_nil_home(_, _), do: {:error, "Invalid match"}
 
-          away_goals > 0 && home_goals > 0 && value == "No" ->
-            {:ok, "win"}
+  # def win_to_nil_away(%{"goals" => %{"home" => home_goals, "away" => away_goals}} = match, value) do
+  #   case match do
+  #     %{"goals" => %{"home" => home_goals, "away" => away_goals}} ->
+  #       cond do
+  #         away_goals > 0 && home_goals == 0 && value == "Yes" ->
+  #           {:ok, "win"}
 
-          true ->
-            {:ok, "loss"}
-        end
+  #         away_goals > 0 && home_goals > 0 && value == "No" ->
+  #           {:ok, "win"}
 
-      _ ->
-        {:error, "Invalid match"}
+  #         true ->
+  #           {:ok, "loss"}
+  #       end
+
+  #     _ ->
+  #       {:error, "Invalid match"}
+  #   end
+  # end
+
+  def win_to_nil_away(%{"goals" => %{"home" => home_goals, "away" => away_goals}}, value) do
+    cond do
+      home_goals = 0 && away_goals > 0 && value == "Yes" ->
+        {:ok, "win"}
+
+      home_goals > 0 && away_goals > 0 && value == "No" ->
+        {:ok, "win"}
+
+      true ->
+        {:ok, "loss"}
     end
   end
+
+  def win_to_nil_away(_, _), do: {:error, "Invalid match"}
 
   def exact_score(match, value) do
     case match do
@@ -279,12 +368,10 @@ defmodule BetsnapWeb.Utils.BetChecker do
           String.split(value, ":")
           |> Enum.at(1)
 
-        cond do
-          home_goals == bet_home && away_goals == bet_away ->
-            {:ok, "win"}
-
-          true ->
-            {:ok, "loss"}
+        if home_goals == bet_home && away_goals == bet_away do
+          {:ok, "win"}
+        else
+          {:ok, "loss"}
         end
 
       _ ->

@@ -1,4 +1,13 @@
 defmodule Betsnap.Accounts.UserToken do
+  @moduledoc """
+  User tokens for various purposes, such as session management,
+  email confirmation, password reset, and email change.
+
+  This module provides functions to generate, verify, and expire
+  tokens. It also provides functions to build queries to fetch
+  the user associated with a token.
+  """
+
   use Ecto.Schema
   import Ecto.Query
   alias Betsnap.Accounts.UserToken

@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.Services.SportsAPI.HTTP do
+  @moduledoc """
+  Module to handle HTTP requests to the sports API
+  """
+
   @behaviour BetsnapWeb.Services.SportsAPI
 
   def get_url(), do: Application.get_env(:betsnap, :api_url)
@@ -70,7 +74,6 @@ defmodule BetsnapWeb.Services.SportsAPI.HTTP do
   end
 
   defp handle_response({:ok, %{body: body, status_code: 200}}) do
-    IO.inspect(Poison.decode!(body))
     {:ok, Poison.decode!(body)}
   end
 

@@ -31,7 +31,7 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
-      
+
       <div>
         <.simple_form
           for={@email_form}
@@ -54,7 +54,7 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
-      
+
       <div>
         <.simple_form
           for={@password_form}
@@ -91,16 +91,16 @@ defmodule BetsnapWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
-      
+
       <div class="w-full flex justify-around my-5">
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="100">
           + $100
         </.button>
-        
+
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="200">
           + $200
         </.button>
-        
+
         <.button phx-disable-with="Changing..." phx-click="add_balance" phx-value-balance="500">
           + $500
         </.button>

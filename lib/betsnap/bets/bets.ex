@@ -1,4 +1,8 @@
 defmodule Betsnap.Bets do
+  @moduledoc """
+  Module to handle bets
+  """
+
   use Ecto.Schema
   import Ecto.Query
 
@@ -10,23 +14,28 @@ defmodule Betsnap.Bets do
 
   def create_bet(attrs) do
     case Repo.get(User, attrs["user_id"]) do
-      nil ->
-        {:error, "User not found"}
-
-      user ->
-        if Decimal.compare(user.balance, attrs["stake"]) == :lt do
-          {:error, "Insufficient balance"}
-        else
-          Repo.transaction(fn ->
-            user
-            |> Accounts.add_balance(Decimal.mult(attrs["stake"], -1))
-
-            %Betsnap.Bet{}
-            |> Betsnap.Bet.changeset(attrs)
-            |> Betsnap.Repo.insert()
-          end)
-        end
+      user -> handle_user_found(user, attrs)
+      nil -> {:error, "User not found"}
     end
+  end
+
+  defp handle_user_found(user, attrs) do
+    if Decimal.compare(user.balance, attrs["stake"]) == :lt do
+      {:error, "Insufficient balance"}
+    else
+      handle_transaction(user, attrs)
+    end
+  end
+
+  defp handle_transaction(user, attrs) do
+    Repo.transaction(fn ->
+      user
+      |> Accounts.add_balance(Decimal.mult(attrs["stake"], -1))
+
+      %Betsnap.Bet{}
+      |> Betsnap.Bet.changeset(attrs)
+      |> Betsnap.Repo.insert()
+    end)
   end
 
   def get_bets(user_id) do
@@ -99,76 +108,123 @@ defmodule Betsnap.Bets do
     # {:ok, bets}
   end
 
+  # def validate_all_bets() do
+  #   bets =
+  #     Betsnap.Repo.all(Betsnap.Bet)
+  #     |> Enum.map(fn bet ->
+  #       case {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
+  #         match = match |> Enum.at(0)
+
+  #         if match["fixture"]["status"]["short"] == "FT" do
+  #           if bet.status == "pending" do
+  #             case BetChecker.check_bet(match, bet.bet, bet.value) do
+  #               {:ok, "win"} ->
+  #                 bet_changeset =
+  #                   bet
+  #                   |> Ecto.Changeset.change(%{status: "win"})
+
+  #                 Betsnap.Repo.transaction(fn ->
+  #                   Betsnap.Repo.update(bet_changeset)
+
+  #                   user = Repo.get!(User, bet.user_id)
+
+  #                   user
+  #                   |> Accounts.add_balance(bet.earn)
+  #                 end)
+
+  #                 bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
+
+  #                 bet
+
+  #               {:ok, "loss"} ->
+  #                 bet_changeset =
+  #                   bet
+  #                   |> Ecto.Changeset.change(%{status: "loss"})
+
+  #                 Betsnap.Repo.update(bet_changeset)
+
+  #                 bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
+
+  #                 bet
+
+  #               {:error, _} ->
+  #                 bet
+  #             end
+  #           end
+  #         end
+  #       else
+  #         {:error, _} -> %{}
+  #       end
+  #     end)
+
+  #   {:ok, bets}
+  # end
+
   def validate_all_bets() do
     bets =
       Betsnap.Repo.all(Betsnap.Bet)
       |> Enum.map(fn bet ->
-        with {:ok, %{"response" => match}} <- SportsAPI.get_match(bet.fixture_id) do
-          match = match |> Enum.at(0)
-
-          if match["fixture"]["status"]["short"] == "FT" do
-            if bet.status == "pending" do
-              case BetChecker.check_bet(match, bet.bet, bet.value) do
-                {:ok, "win"} ->
-                  bet_changeset =
-                    bet
-                    |> Ecto.Changeset.change(%{status: "win"})
-
-                  Betsnap.Repo.transaction(fn ->
-                    Betsnap.Repo.update(bet_changeset)
-
-                    user = Repo.get!(User, bet.user_id)
-
-                    user
-                    |> Accounts.add_balance(bet.earn)
-                  end)
-
-                  bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
-
-                  bet
-
-                {:ok, "loss"} ->
-                  bet_changeset =
-                    bet
-                    |> Ecto.Changeset.change(%{status: "loss"})
-
-                  Betsnap.Repo.update(bet_changeset)
-
-                  bet = Betsnap.Repo.get(Betsnap.Bet, bet.id)
-
-                  bet
-
-                {:error, _} ->
-                  bet
-              end
-            end
-          end
-        else
-          {:error, _} -> %{}
-        end
+        Task.async(fn -> validate_bet(bet) end)
       end)
+      |> Enum.map(&Task.await/1)
 
     {:ok, bets}
   end
 
-  def delete_bet(id) do
-    case Betsnap.Repo.get(Betsnap.Bet, id) do
-      nil ->
-        {:error, "Bet not found"}
+  defp validate_bet(bet) do
+    case SportsAPI.get_match(bet.fixture_id) do
+      {:ok, %{"response" => match}} ->
+        match = match |> Enum.at(0)
 
-      bet ->
-        case Repo.get(User, bet.user_id) do
-          nil ->
-            {:error, "User not found"}
-
-          user ->
-            Repo.transaction(fn ->
-              user
-              |> Accounts.add_balance(bet.stake)
-
-              Betsnap.Repo.delete(bet)
-            end)
+        cond do
+          match["fixture"]["status"]["short"] == "FT" -> nil
+          bet.status == "pending" -> nil
+          true -> handle_bet_result(bet, match)
         end
+
+      _ ->
+        {:error, "Match not found"}
+    end
+  end
+
+  defp handle_bet_result(bet, match) do
+    case BetChecker.check_bet(match, bet.bet, bet.value) do
+      {:ok, "win"} ->
+        update_bet_status(bet, "win")
+        update_user_balance(bet.earn, bet.user_id)
+
+      {:ok, "loss"} ->
+        update_bet_status(bet, "loss")
+
+      {:error, _} ->
+        bet
+    end
+  end
+
+  defp update_bet_status(bet, status) do
+    bet
+    |> Ecto.Changeset.change(%{status: status})
+    |> Betsnap.Repo.update()
+  end
+
+  defp update_user_balance(earnings, user_id) do
+    user = Repo.get!(User, user_id)
+
+    user
+    |> Accounts.add_balance(earnings)
+  end
+
+  def delete_bet(id) do
+    with bet <- Betsnap.Repo.get(Betsnap.Bet, id),
+         user <- Repo.get(User, bet.user_id) do
+      Repo.transaction(fn ->
+        user
+        |> Accounts.add_balance(bet.stake)
+
+        Betsnap.Repo.delete(bet)
+      end)
+    else
+      _ -> {:error, "Bet not found"}
     end
   end
 end

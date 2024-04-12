@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.Services.SportsAPI.Stub do
+  @moduledoc """
+  Stub module for the SportsAPI
+  """
+
   @behaviour BetsnapWeb.Services.SportsAPI
 
   # def get_url(), do: Application.get_env(:betsnap, :api_url)
@@ -83,7 +87,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Santiago de Quer├⌐taro",
-              "id" => 20476,
+              "id" => 20_476,
               "name" => "Estadio Corregidora"
             }
           },
@@ -105,7 +109,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
           },
           "teams" => %{
             "away" => %{
-              "id" => 14002,
+              "id" => 14_002,
               "logo" => "https://media.api-sports.io/football/teams/14002.png",
               "name" => "Mazatl├ín",
               "winner" => nil
@@ -129,7 +133,7 @@ defmodule BetsnapWeb.Services.SportsAPI.Stub do
             "timezone" => "UTC",
             "venue" => %{
               "city" => "Aguascalientes",
-              "id" => 20474,
+              "id" => 20_474,
               "name" => "Estadio Victoria"
             }
           },

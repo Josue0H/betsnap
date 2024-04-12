@@ -5,6 +5,15 @@ defmodule BetsnapWeb.UserSessionController do
   alias BetsnapWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
+    new_user_params = %{
+      "identifier" => params["user"]["email"],
+      "email" => params["user"]["email"],
+      "username" => params["user"]["username"],
+      "password" => params["user"]["password"]
+    }
+
+    params = Map.put(params, "user", new_user_params)
+
     create(conn, params, "Account created successfully!")
   end
 
@@ -20,6 +29,7 @@ defmodule BetsnapWeb.UserSessionController do
 
   defp create(conn, %{"user" => user_params}, info) do
     %{"identifier" => identifier, "password" => password} = user_params
+    # %{"email" => email, "username" => username, "password" => password} = user_params
 
     if user = Accounts.get_user_by_identifier_password(identifier, password) do
       conn

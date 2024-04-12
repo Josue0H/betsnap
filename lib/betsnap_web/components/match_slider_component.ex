@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.MatchSlider do
+  @moduledoc """
+  Module to render a slider of matches
+  """
+
   use BetsnapWeb, :live_component
 
   def mount(socket) do
@@ -18,7 +22,7 @@ defmodule BetsnapWeb.MatchSlider do
         <div class="w-full h-1/2 relative py-2 px-2">
           <hr class="border-white my-2" />
           <h1 class="text-white"><%= Enum.at(@matches, 0)["league"]["name"] %></h1>
-          
+
           <div class="w-full flex overflow-auto custom-slider">
             <%= for match <- @matches do %>
               <.match_card match={match} />
@@ -29,7 +33,7 @@ defmodule BetsnapWeb.MatchSlider do
         <div class="w-full h-1/2 relative py-2 px-2">
           <hr class="border-white my-2" />
           <h1 class="text-white"><%= Enum.at(@matches, 0)["league"]["name"] %></h1>
-          
+
           <h1 class="text-white">No matches found</h1>
         </div>
       <% end %>
@@ -47,7 +51,7 @@ defmodule BetsnapWeb.MatchSlider do
         <span class="text-white text-center"><%= get_date(@match["fixture"]["timestamp"]) %></span>
         <span class="text-white text-xs text-center"><%= @match["fixture"]["venue"]["name"] %></span>
       </div>
-      
+
       <div class="flex w-full h-auto mt-5 justify-around items-center">
         <%= if @match["teams"]["home"]["logo"] do %>
           <img
@@ -58,7 +62,7 @@ defmodule BetsnapWeb.MatchSlider do
         <% else %>
           <span class="text-white font-bold"><%= @match["teams"]["home"]["name"] %></span>
         <% end %>
-         <span class="text-white font-bold">vs</span>
+        <span class="text-white font-bold">vs</span>
         <%= if @match["teams"]["away"]["logo"] do %>
           <img
             src={@match["teams"]["away"]["logo"]}
@@ -69,17 +73,17 @@ defmodule BetsnapWeb.MatchSlider do
           <span class="text-white font-bold"><%= @match["teams"]["away"]["name"] %></span>
         <% end %>
       </div>
-      
+
       <div class="w-full flex justify-center items-center">
         <%= if @match["fixture"]["status"]["short"] === "FT" do %>
           <span class="text-white text-center">
             FT <%= @match["goals"]["home"] %> - <%= @match["goals"]["away"] %>
           </span>
         <% end %>
-        
+
         <%= if @match["fixture"]["status"]["short"] != "FT" && @match["fixture"]["status"]["short"] != "NS" && @match["fixture"]["status"]["short"] != "PST" do %>
           <div class="h-2 w-2 bg-[green] mx-1 rounded"></div>
-           <span class="text-white text-center">LIVE</span>
+          <span class="text-white text-center">LIVE</span>
         <% end %>
       </div>
     </.link>

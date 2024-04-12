@@ -1,4 +1,8 @@
 defmodule Betsnap.Accounts.UserNotifier do
+  @moduledoc """
+  Module to handle user notifications
+  """
+
   import Swoosh.Email
 
   alias Betsnap.Mailer

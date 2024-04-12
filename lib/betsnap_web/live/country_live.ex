@@ -8,6 +8,11 @@ defmodule BetsnapWeb.CountryLive do
   end
 
   def handle_params(%{"code" => code}, _uri, socket) do
+    handle_country_loading(code, socket)
+    handle_leagues_loading(code, socket)
+  end
+
+  defp handle_country_loading(code, socket) do
     case SportsAPI.get_country(code) do
       {:ok, %{"response" => country}} ->
         send(self(), {:country_loaded, Enum.at(country, 0)})
@@ -15,21 +20,19 @@ defmodule BetsnapWeb.CountryLive do
       {:error, _} ->
         {:noreply, assign(socket, loading_country: false)}
     end
+  end
 
+  defp handle_leagues_loading(code, socket) do
     case SportsAPI.get_country_leagues(code) do
       {:ok, %{"response" => leagues}} ->
-        ids = Enum.map(leagues, fn league -> league["league"]["id"] end)
-
         today = Date.utc_today()
         next_week = Date.add(today, 7)
 
-        tasks =
-          Enum.map(ids, fn league_id ->
-            Task.async(fn -> SportsAPI.get_leagues_matches(league_id, today, next_week) end)
-          end)
-
         results =
-          tasks
+          Enum.map(leagues, fn league -> league["league"]["id"] end)
+          |> Enum.map(fn league_id ->
+            handle_create_task(league_id, today, next_week)
+          end)
           |> Enum.map(&Task.await/1)
           |> Enum.map(fn
             {:ok, %{"response" => fixtures}} -> fixtures
@@ -42,6 +45,10 @@ defmodule BetsnapWeb.CountryLive do
       {:error, _} ->
         {:noreply, assign(socket, loading_leagues: false)}
     end
+  end
+
+  defp handle_create_task(league_id, today, next_week) do
+    Task.async(fn -> SportsAPI.get_leagues_matches(league_id, today, next_week) end)
   end
 
   def handle_info({:country_loaded, country}, socket) do

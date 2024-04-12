@@ -1,4 +1,8 @@
 defmodule Betsnap.HomeServer do
+  @moduledoc """
+  Module to handle the home page data with a GenServer
+  """
+
   use GenServer
 
   alias BetsnapWeb.Services.SportsAPI
@@ -16,6 +20,10 @@ defmodule Betsnap.HomeServer do
   @champions_league 2
 
   defmodule State do
+    @moduledoc """
+    Struct to hold the state of the HomeServer
+    """
+
     defstruct countries: [], leagues: []
   end
 

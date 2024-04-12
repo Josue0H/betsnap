@@ -1,4 +1,8 @@
 defmodule BetsnapWeb.ImageSlider do
+  @moduledoc """
+  Image slider component
+  """
+
   use BetsnapWeb, :live_component
 
   def mount(socket) do
@@ -22,13 +26,13 @@ defmodule BetsnapWeb.ImageSlider do
           />
         </div>
       <% end %>
-      
+
       <%= for element <- @elements do %>
         <%= if @value == element.id do %>
           <.element title={element.title} subtitle={element.subtitle} image={element.image} />
         <% end %>
       <% end %>
-      
+
       <%= if @value < length(@elements) - 1 do %>
         <div phx-target={@myself} phx-click="next">
           <.icon
@@ -47,7 +51,7 @@ defmodule BetsnapWeb.ImageSlider do
       <img src={@image} alt="slide-1" class="w-full h-full object-cover" />
       <div class="absolute flex flex-col items-center">
         <h1 class="text-white font-bold text-5xl mb-3"><%= @title %></h1>
-        
+
         <h3 class="text-white"><%= @subtitle %></h3>
       </div>
     </div>

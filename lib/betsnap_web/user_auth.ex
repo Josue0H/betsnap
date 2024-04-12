@@ -1,4 +1,11 @@
 defmodule BetsnapWeb.UserAuth do
+  @moduledoc """
+  User authentication and session management.
+
+  This module provides functions to log in and log out users,
+  and to authenticate users based on session data.
+  """
+
   use BetsnapWeb, :verified_routes
 
   import Plug.Conn

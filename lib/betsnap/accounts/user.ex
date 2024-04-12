@@ -1,4 +1,8 @@
 defmodule Betsnap.Accounts.User do
+  @moduledoc """
+  The `User` schema and changesets.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

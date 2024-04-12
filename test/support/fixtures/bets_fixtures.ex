@@ -1,4 +1,8 @@
 defmodule Betsnap.BetsFixtures do
+  @moduledoc """
+  Module to handle bets fixtures
+  """
+
   def valid_bet_attributes(attrs \\ %{}) do
     %{id: id} = Betsnap.AccountsFixtures.user_fixture()
 
