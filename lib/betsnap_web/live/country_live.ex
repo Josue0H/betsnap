@@ -1,7 +1,7 @@
 defmodule BetsnapWeb.CountryLive do
   use BetsnapWeb, :live_view
 
-  alias BetsnapWeb.Api.SportsAPI
+  alias BetsnapWeb.Services.SportsAPI
 
   def mount(_params, _session, socket) do
     {:ok, assign(socket, leagues: [], country: %{}, loading_leagues: true, loading_country: true)}

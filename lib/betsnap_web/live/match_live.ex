@@ -1,7 +1,7 @@
 defmodule BetsnapWeb.MatchLive do
   use BetsnapWeb, :live_view
 
-  alias BetsnapWeb.Api.SportsAPI
+  alias BetsnapWeb.Services.SportsAPI
   alias Betsnap.Bets
 
   import Number.Currency

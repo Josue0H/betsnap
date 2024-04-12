@@ -1,11 +1,12 @@
 defmodule Betsnap.HomeServer do
   use GenServer
 
-  alias BetsnapWeb.Api.SportsAPI
+  alias BetsnapWeb.Services.SportsAPI
 
   @name :home_server
 
   @interval :timer.minutes(10)
+  # @interval :timer.seconds(5)
 
   @premier_league_id 39
   @liga_mx_id 262

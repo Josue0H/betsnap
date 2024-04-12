@@ -1,7 +1,7 @@
 defmodule BetsnapWeb.MatchTabs do
   use BetsnapWeb, :live_component
 
-  alias BetsnapWeb.Api.SportsAPI
+  alias BetsnapWeb.Services.SportsAPI
 
   @last_matches 5
 
@@ -34,8 +34,6 @@ defmodule BetsnapWeb.MatchTabs do
     {:ok, players_away_response} = Task.await(players_away_task)
     {:ok, matches_home_response} = Task.await(matches_home_task)
     {:ok, matches_away_response} = Task.await(matches_away_task)
-
-    IO.inspect(players_home_response, label: "Players Home")
 
 
       odds =

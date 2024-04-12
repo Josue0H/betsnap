@@ -64,7 +64,8 @@ defmodule Betsnap.MixProject do
       {:timex, "~> 3.7"},
       {:number, "~> 1.0.1"},
       {:dotenv, "~> 3.1"},
-      {:oban, "~> 2.17"}
+      {:oban, "~> 2.17"},
+      {:mox, "~> 1.0", only: :test}
     ]
   end
 

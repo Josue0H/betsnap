@@ -156,8 +156,6 @@ defmodule BetsnapWeb.UserSettingsLive do
       |> Map.put(:action, :validate)
       |> to_form()
 
-    IO.inspect(username_form, label: "username_form")
-
     {:noreply, assign(socket, username_form: username_form, current_username: username)}
   end
 

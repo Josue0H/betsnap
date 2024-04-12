@@ -5,7 +5,7 @@ defmodule Betsnap.Bets do
   alias Betsnap.Accounts.{User}
   alias Betsnap.Accounts
   alias Betsnap.Repo
-  alias BetsnapWeb.Api.SportsAPI
+  alias BetsnapWeb.Services.SportsAPI
   alias BetsnapWeb.Utils.BetChecker
 
   def create_bet(attrs) do
